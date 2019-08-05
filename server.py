@@ -2,7 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/news_feed')
 def news_feed():
     return render_template('news_feed.html')
 
@@ -12,20 +12,29 @@ def chat():
     return render_template('chat.html')
 
 
-@app.route('/identify', methods=['GET', 'POST'])
+@app.route('/')
 def identify():
-
     return render_template('identify.html')
 
 
-@app.route('/search', methods=['GET', 'POST'])
-def search():
+@app.route('/credentials', methods=['GET', 'POST'])
+def credentials():
     if request.method == 'POST':
-        if request.form['username'] == 'admin':  # IF present go to login for password
-            return render_template('login.html', username=request.form['username'])
+        # IF present go to login for password
+        if request.form['email'] == 'admin@admin.com':
+            return render_template('login.html', email=request.form['email'])
         else:   # otherwise go to signup
-            return render_template('signup.html', username=request.form['username'])
+            return render_template('signup.html', email=request.form['email'])
     return
+
+
+@app.route('/signup')
+def signup():
+    return render_template('signup.html')
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
 
 
 if __name__ == '__main__':

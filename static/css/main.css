@@ -239,9 +239,6 @@ iframe {
   padding: 0 30px 0 68px;
 }
 
-
-/*------------------------------------------------------------------
-[ Focus ]*/
 .focus-input100 {
   display: block;
   position: absolute;
@@ -304,8 +301,7 @@ iframe {
   padding-left: 28px;
 }
 
-/*------------------------------------------------------------------
-[ Button ]*/
+
 .container-login100-form-btn {
   width: 100%;
   display: -webkit-box;
@@ -350,10 +346,6 @@ iframe {
 
 
 
-/*------------------------------------------------------------------
-[ Responsive ]*/
-
-
 
 @media (max-width: 992px) {
   .wrap-login100 {
@@ -389,9 +381,6 @@ iframe {
   }
 }
 
-
-/*------------------------------------------------------------------
-[ Alert validate ]*/
 
 .validate-input {
   position: relative;

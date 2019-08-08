@@ -23,8 +23,19 @@ def chat():
 
 
 @app.route('/')
-def login():
-    return render_template('login.html')
+def identify():
+    return render_template('identify.html')
+
+@app.route('/check_user', methods=['GET', 'POST'])
+def check_user():
+    email = request.form['email']
+    cur = mysql.connection.cursor()
+    cur.execute('select * from login_credentials where email=%s', [email])
+    result = cur.fetchall()
+    cur.close()
+    if result != "":
+        return render_template('login.html', email=email)
+    return render_template('signup.html', email=email)
 
 
 @app.route('/signup')
@@ -47,28 +58,25 @@ def register_user():
     return render_template('news_feed.html')
 
 
-@app.route('/verify_login', methods=['GET', 'POST'])
-def verify_login():
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    return render_template('login.html')
+
+@app.route('/verify_user', methods=['GET', 'POST'])
+def verify_user():
     if request.method == 'POST':
-        cur = mysql.connection.cursor()
         email = request.form['email']
         password = request.form['pass']
         passwordhash = hashlib.md5(password.encode()).hexdigest()
-        cur.execute('select * from login_credentials')
-        db = cur.fetchall() #fetch all entries which satisfied the query
+        cur = mysql.connection.cursor()
+        cur.execute('select * from login_credentials where email=%s', [email])
+        result = cur.fetchall() #fetch all entries which satisfied the query
         cur.close()
-        emailexists = 0
-        for dbentry in db:
-            dbemail = dbentry[0]
-            dbpassword = dbentry[1]
-            if email == dbemail: #if email is already registered
-                emailexists = 1
-                if password == dbpassword:
-                    return render_template('news_feed.html') #pass email to identify the user here
-        if emailexists == 0: #lead to signup page if email is not registered
-            return render_template('signup.html', email=request.form['email'])
+        dbpassword = result[0][1]
+        if passwordhash == dbpassword:
+            return render_template('news_feed.html', email=email) #pass email to identify the user here
         else: #return something that says either email or password is wrong
-            return 
+            return render_template('login.html', email=email)
     return
 
 

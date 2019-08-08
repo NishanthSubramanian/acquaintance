@@ -49,11 +49,18 @@ def register_user():
         password = request.form['pass']
         passwordhash = hashlib.md5(password.encode()).hexdigest()
         username = request.form['username']
-        #no school
+        # photo = getImageLocation()
+        # with open(photo, 'rb') as file:
+        #     binaryphoto = file.read()
+        
         cur = mysql.connection.cursor()
         cur.execute('insert into login_credentials values(%s, %s)', [email, passwordhash])
         mysql.connection.commit()
-        #update in profile table too
+        
+        #####create table user_profile ( email varchar(50), username varchar(50), photo blob);
+        # cur.execute('insert into user_profile values(%s, %s, %s)', [email, username, binaryphoto])
+        # mysql.connection.commit()
+
         cur.close()
     return render_template('news_feed.html')
 

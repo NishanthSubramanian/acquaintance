@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request,send_from_directory
 from flask_mysqldb import MySQL
 import hashlib
-
+from werkzeug import secure_filename
+import os
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -11,7 +12,8 @@ app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'acq'
 mysql = MySQL(app)
 
-
+UPLOAD_FOLDER = 'uploads/'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.route('/news_feed')
 def news_feed():
     return render_template('news_feed.html')
@@ -52,9 +54,20 @@ def register_user():
         # photo = getImageLocation()
         # with open(photo, 'rb') as file:
         #     binaryphoto = file.read()
-        
+        file = request.files['profilePhoto']
+        filePath = request.form['profilePhotoPath']
+        print("BRO:" + filePath)
+        # if file:
+        #     filename = secure_filename(file.filename)
+        #     file.save(os.path.join(app.config[filePath], filename))
+        #     return send_from_directory(app.config[filePath],filename)
+
+        with open(filePath, 'rb') as file:
+            binaryphoto = file.read()
+
         cur = mysql.connection.cursor()
         cur.execute('insert into login_credentials values(%s, %s)', [email, passwordhash])
+        cur.execute('insert into user_profile values(%s, %s, %s)', [email, username, binaryphoto])        
         mysql.connection.commit()
         
         #####create table user_profile ( email varchar(50), username varchar(50), photo blob);
@@ -62,8 +75,8 @@ def register_user():
         # mysql.connection.commit()
 
         cur.close()
+    return file.filename
     return render_template('news_feed.html')
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -85,7 +98,6 @@ def verify_user():
         else: #return something that says either email or password is wrong
             return render_template('login.html', email=email)
     return
-
 
 if __name__ == '__main__':
     app.run()

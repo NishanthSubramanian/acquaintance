@@ -57,24 +57,32 @@ def register_user():
         file = request.files['profilePhoto']
         filePath = request.form['profilePhotoPath']
         print("BRO:" + filePath)
+        print("file:", type(file), file, file.filename)
+        filestream = file.stream
+        print(file.mimetype)
+        readvalue = filestream.read()
+        print(readvalue)
+        outputfile = open('test.png', 'wb')
+        outputfile.write(readvalue)
+
         # if file:
         #     filename = secure_filename(file.filename)
         #     file.save(os.path.join(app.config[filePath], filename))
         #     return send_from_directory(app.config[filePath],filename)
 
-        with open(filePath, 'rb') as file:
-            binaryphoto = file.read()
+        # with open(filePath, 'rb') as file:
+        #     binaryphoto = file.read()
 
-        cur = mysql.connection.cursor()
-        cur.execute('insert into login_credentials values(%s, %s)', [email, passwordhash])
-        cur.execute('insert into user_profile values(%s, %s, %s)', [email, username, binaryphoto])        
-        mysql.connection.commit()
+        # cur = mysql.connection.cursor()
+        # cur.execute('insert into login_credentials values(%s, %s)', [email, passwordhash])
+        # cur.execute('insert into user_profile values(%s, %s, %s)', [email, username, binaryphoto])        
+        # mysql.connection.commit()
         
         #####create table user_profile ( email varchar(50), username varchar(50), photo blob);
         # cur.execute('insert into user_profile values(%s, %s, %s)', [email, username, binaryphoto])
         # mysql.connection.commit()
 
-        cur.close()
+        # cur.close()
     return file.filename
     return render_template('news_feed.html')
 

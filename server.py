@@ -5,15 +5,18 @@ from flask_mysqldb import MySQL
 import hashlib
 from werkzeug import secure_filename
 import os
+import requests
+from base64 import b64encode
 app = Flask(__name__)
+
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'acq'
 mysql = MySQL(app)
+content_type = 'image/jpeg'
+headers = {'content-type': content_type}
 
-UPLOAD_FOLDER = 'uploads/'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 @app.route('/news_feed')
 def news_feed():
     return render_template('news_feed.html')
@@ -55,16 +58,22 @@ def register_user():
         # with open(photo, 'rb') as file:
         #     binaryphoto = file.read()
         file = request.files['profilePhoto']
-        filePath = request.form['profilePhotoPath']
-        print("BRO:" + filePath)
-        print("file:", type(file), file, file.filename)
+        obj = file.read()
+        # filePath = request.form['profilePhotoPath']
+        # print("BRO:" + filePath)
+        # print("file:", type(file), file, file.filename)
         filestream = file.stream
-        print(file.mimetype)
+        # print(file.mimetype)
         readvalue = filestream.read()
+        # print(type(readvalue))
+        print(type(file))
+        # outputfile = open('static/img/test1.png', 'wb')
+        # outputfile.write(readvalue)
         print(readvalue)
-        outputfile = open('test.png', 'wb')
-        outputfile.write(readvalue)
 
+        image = b64encode(obj).decode("utf-8")
+        # print("BRUH",image)
+        # print(type(readvalue))
         # if file:
         #     filename = secure_filename(file.filename)
         #     file.save(os.path.join(app.config[filePath], filename))
@@ -83,8 +92,10 @@ def register_user():
         # mysql.connection.commit()
 
         # cur.close()
-    return file.filename
-    return render_template('news_feed.html')
+    # response = requests.post('http://127.0.0.1:5000/profile', data=obj, headers=headers)
+    # return response
+    # return redirect(url_for('profile'))
+    return render_template('profile.html',image=image)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -106,6 +117,15 @@ def verify_user():
         else: #return something that says either email or password is wrong
             return render_template('login.html', email=email)
     return
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+    image = request.files["data"]
+    print(image)
+
+            # return redirect(request.url)
+    # return render_template("public/upload_image.html")
+    return image
 
 if __name__ == '__main__':
     app.run()

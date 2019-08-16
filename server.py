@@ -62,8 +62,8 @@ def register_user():
         password = request.form['pass']
         passwordhash = hashlib.md5(password.encode()).hexdigest()
         username = request.form['username']
-        file = request.files['profilePhoto']
-        obj = file.read()
+        uploadedImage = request.files['profilePhoto']
+        imageBytes = uploadedImage.read()
         # filestream = file.stream
         # readvalue = filestream.read()
 
@@ -71,8 +71,8 @@ def register_user():
         cur.execute('insert into login_credentials values(%s, %s)', [email, passwordhash])
         mysql.connection.commit()
         
-        if obj != '':
-            image = b64encode(obj).decode('utf-8')
+        if imageBytes != '': #needs to be checked
+            image = b64encode(imageBytes).decode('utf-8')
             cur.execute('insert into user_profile values(%s, %s, %s)', [email, username, image]) #obj or image?
             mysql.connection.commit()
 

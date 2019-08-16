@@ -3,9 +3,6 @@
 from flask import Flask, render_template, redirect, url_for, request,send_from_directory
 from flask_mysqldb import MySQL
 import hashlib
-from werkzeug import secure_filename
-import os
-import requests
 from base64 import b64encode
 app = Flask(__name__)
 
@@ -14,17 +11,22 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
 app.config['MYSQL_DB'] = 'acq'
 mysql = MySQL(app)
-content_type = 'image/jpeg'
-headers = {'content-type': content_type}
+
+
+## create table login_credentials(email varchar(50) primary key not null, password varchar(32) not null)
+## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob)
+
 
 @app.route('/news_feed')
 def news_feed():
     return render_template('news_feed.html')
 
 
+
 @app.route('/chat')
 def chat():
     return render_template('chat.html')
+
 
 
 @app.route('/')
@@ -38,9 +40,10 @@ def check_user():
     cur.execute('select * from login_credentials where email=%s', [email])
     result = cur.fetchall()
     cur.close()
-    if result != "":
+    if len(result) != 0:
         return render_template('login.html', email=email)
     return render_template('signup.html', email=email)
+
 
 
 @app.route('/signup')
@@ -54,48 +57,24 @@ def register_user():
         password = request.form['pass']
         passwordhash = hashlib.md5(password.encode()).hexdigest()
         username = request.form['username']
-        # photo = getImageLocation()
-        # with open(photo, 'rb') as file:
-        #     binaryphoto = file.read()
         file = request.files['profilePhoto']
         obj = file.read()
-        # filePath = request.form['profilePhotoPath']
-        # print("BRO:" + filePath)
-        # print("file:", type(file), file, file.filename)
-        filestream = file.stream
-        # print(file.mimetype)
-        readvalue = filestream.read()
-        # print(type(readvalue))
-        print(type(file))
-        # outputfile = open('static/img/test1.png', 'wb')
-        # outputfile.write(readvalue)
-        print(readvalue)
+        # filestream = file.stream
+        # readvalue = filestream.read()
 
-        image = b64encode(obj).decode("utf-8")
-        # print("BRUH",image)
-        # print(type(readvalue))
-        # if file:
-        #     filename = secure_filename(file.filename)
-        #     file.save(os.path.join(app.config[filePath], filename))
-        #     return send_from_directory(app.config[filePath],filename)
-
-        # with open(filePath, 'rb') as file:
-        #     binaryphoto = file.read()
-
-        # cur = mysql.connection.cursor()
-        # cur.execute('insert into login_credentials values(%s, %s)', [email, passwordhash])
-        # cur.execute('insert into user_profile values(%s, %s, %s)', [email, username, binaryphoto])        
-        # mysql.connection.commit()
+        cur = mysql.connection.cursor()
+        cur.execute('insert into login_credentials values(%s, %s)', [email, passwordhash])
+        mysql.connection.commit()
         
-        #####create table user_profile ( email varchar(50), username varchar(50), photo blob);
-        # cur.execute('insert into user_profile values(%s, %s, %s)', [email, username, binaryphoto])
-        # mysql.connection.commit()
+        if obj != '':
+            image = b64encode(obj).decode('utf-8')
+            cur.execute('insert into user_profile values(%s, %s, %s)', [email, username, image])
+            mysql.connection.commit()
 
-        # cur.close()
-    # response = requests.post('http://127.0.0.1:5000/profile', data=obj, headers=headers)
-    # return response
-    # return redirect(url_for('profile'))
+        cur.close()
     return render_template('profile.html',image=image)
+
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -118,14 +97,14 @@ def verify_user():
             return render_template('login.html', email=email)
     return
 
+
+
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    image = request.files["data"]
-    print(image)
-
-            # return redirect(request.url)
-    # return render_template("public/upload_image.html")
+    image = request.files['data']
     return image
+
+
 
 if __name__ == '__main__':
     app.run()

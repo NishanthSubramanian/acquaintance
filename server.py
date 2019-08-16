@@ -16,6 +16,11 @@ mysql = MySQL(app)
 ## create table login_credentials(email varchar(50) primary key not null, password varchar(32) not null)
 ## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob)
 
+class Post:
+    text = ''
+    image = NotImplemented
+
+
 
 @app.route('/news_feed')
 def news_feed():
@@ -68,7 +73,7 @@ def register_user():
         
         if obj != '':
             image = b64encode(obj).decode('utf-8')
-            cur.execute('insert into user_profile values(%s, %s, %s)', [email, username, image])
+            cur.execute('insert into user_profile values(%s, %s, %s)', [email, username, image]) #obj or image?
             mysql.connection.commit()
 
         cur.close()

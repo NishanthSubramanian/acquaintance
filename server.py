@@ -13,8 +13,24 @@ app.config['MYSQL_DB'] = 'acq'
 mysql = MySQL(app)
 
 
-## create table login_credentials(email varchar(50) primary key not null, password varchar(32) not null)
-## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob)
+## create table login_credentials(email varchar(50) primary key not null, password varchar(32) not null);
+## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob);
+## create table friend_list(email1 varchar(50), email2 varchar(50));
+## create table friend_request(email1 varchar(50), email2 varchar(50));
+## create table posts(email varchar(50), text varchar(1000), image mediumblob);
+
+"""
+searching for someone would be:
+    select * from user_profile where username=searchname;
+
+getting posts in news feed would be:
+    select email2 from friend_list where email1=currentemail;
+    select post from posts where email in email2 (iterate over entire list of email2)
+or we should probably join the tables and then choose
+
+checking for friend requests would be:
+    select email1 from friend_request where email2=currentemail;
+"""
 
 class Post:
     text = ''

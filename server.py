@@ -4,6 +4,7 @@ from flask import Flask, render_template, redirect, url_for, request,send_from_d
 from flask_mysqldb import MySQL
 import hashlib
 from base64 import b64encode
+from flask import jsonify 
 app = Flask(__name__)
 
 app.config['MYSQL_HOST'] = 'localhost'
@@ -38,11 +39,16 @@ class Post:
 
 
 
-@app.route('/news_feed')
-def news_feed():
-    return render_template('news_feed.html')
+@app.route('/autocomplete', methods=['GET'])
+def autocomplete():
+    search = request.args.get('q')
 
+    
 
+    # query = db_session.query(Movie.title).filter(Movie.title.like('%' + str(search) + '%'))
+    # results = [mv[0] for mv in query.all()]
+
+    return jsonify(matching_results=results[1])
 
 @app.route('/chat')
 def chat():
@@ -124,6 +130,22 @@ def verify_user():
 def profile():
     image = request.files['data']
     return image
+
+
+
+
+@app.route('/news_feed/<string:email>' )
+def news_feed(email):
+    return render_template('news_feed.html', email=email)
+
+@app.route('/search_profile',methods=['GET','POST'])
+def search_profile():
+    cur = mysql.connection.cursor()
+    cur.execute('select email,username from user_profile')
+    results = cur.fetchall()
+    cur.close()
+    print(results)
+    return jsonify(results)
 
 
 

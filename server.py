@@ -39,20 +39,9 @@ class Post:
 
 
 
-@app.route('/autocomplete', methods=['GET'])
-def autocomplete():
-    search = request.args.get('q')
-
-    
-
-    # query = db_session.query(Movie.title).filter(Movie.title.like('%' + str(search) + '%'))
-    # results = [mv[0] for mv in query.all()]
-
-    return jsonify(matching_results=results[1])
-
-@app.route('/chat')
+@app.route('/temp')
 def chat():
-    return render_template('chat.html')
+    return render_template('temp.html')
 
 
 
@@ -144,7 +133,7 @@ def search_profile():
     cur.execute('select email,username from user_profile')
     results = cur.fetchall()
     cur.close()
-    print(results)
+    # print(results)
     return jsonify(results)
 
 

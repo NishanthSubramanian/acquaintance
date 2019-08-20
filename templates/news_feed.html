@@ -8,10 +8,24 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 	<link href="../static/css/bootstrap.css" rel="stylesheet">
 	<link href="../static/css/news_feed.css" rel="stylesheet">
-	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-	<link rel="stylesheet" href="/resources/demos/style.css">
+	<!-- <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link rel="stylesheet" href="/resources/demos/style.css"> -->
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<script type="text/javascript" src="../static/js/bootstrap.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function () {
+			$('[data-toggle=offcanvas]').click(function () {
+				$(this).toggleClass('visible-xs text-center');
+				$(this).find('i').toggleClass('glyphicon-chevron-right glyphicon-chevron-left');
+				$('.row-offcanvas').toggleClass('active');
+				$('#lg-menu').toggleClass('hidden-xs').toggleClass('visible-xs');
+				$('#xs-menu').toggleClass('visible-xs').toggleClass('hidden-xs');
+				$('#btnShow').toggle();
+			});
+		});
+	</script>
 </head>
 <script>
 	$(function () {
@@ -30,7 +44,7 @@
 			// console.log("um");
 			// console.log(profiles);
 			// a = document.getElementById("json-datalist");
-			
+
 			function autocomplete(inp, arr) {
 				/*the autocomplete function takes two arguments,
 				the text field element and an array of possible autocompleted values:*/
@@ -48,7 +62,7 @@
 					// a.setAttribute("class", "autocomplete-items");
 
 					a = document.getElementById("json-datalist");
-					$( "#json-datalist" ).empty();
+					$("#json-datalist").empty();
 					/*append the DIV element as a child of the autocomplete container:*/
 					// this.parentNode.appendChild(a);
 					/*for each item in the array...*/
@@ -69,7 +83,9 @@
 							/*execute a function when someone clicks on the item value (DIV element):*/
 							b.addEventListener("click", function (e) {
 								/*insert the value for the autocomplete text field:*/
+								console.log(inp.value);
 								inp.value = this.getElementsByTagName("input")[0].value;
+								console.log(this.getElementsByTagName("input")[0].value);
 								/*close the list of autocompleted values,
 								(or any other open lists of autocompleted values:*/
 								closeAllLists();
@@ -477,20 +493,8 @@
 		</div>
 	</div>
 
-	<script type="text/javascript" src="../static/js/jquery.js"></script>
-	<script type="text/javascript" src="../static/js/bootstrap.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function () {
-			$('[data-toggle=offcanvas]').click(function () {
-				$(this).toggleClass('visible-xs text-center');
-				$(this).find('i').toggleClass('glyphicon-chevron-right glyphicon-chevron-left');
-				$('.row-offcanvas').toggleClass('active');
-				$('#lg-menu').toggleClass('hidden-xs').toggleClass('visible-xs');
-				$('#xs-menu').toggleClass('visible-xs').toggleClass('hidden-xs');
-				$('#btnShow').toggle();
-			});
-		});
-	</script>
+
+
 </body>
 
 </html>

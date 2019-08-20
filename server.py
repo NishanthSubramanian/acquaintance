@@ -39,9 +39,9 @@ class Post:
 
 
 
-@app.route('/temp')
+@app.route('/send_friend_request')
 def chat():
-    return render_template('temp.html')
+    return "Send friend reqeust here"
 
 
 
@@ -88,6 +88,7 @@ def register_user():
             mysql.connection.commit()
 
         cur.close()
+    # return redirect(url_for('profile',image = image))
     return render_template('profile.html',image=image)
 
 
@@ -115,10 +116,9 @@ def verify_user():
 
 
 
-@app.route('/profile', methods=['GET', 'POST'])
-def profile():
-    image = request.files['data']
-    return image
+@app.route('/profile')
+def profile(image):
+    return render_template('profile.html',image=image)
 
 
 

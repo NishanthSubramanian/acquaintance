@@ -88,7 +88,6 @@ def register_user():
             mysql.connection.commit()
 
         cur.close()
-        print(image)
     return redirect(url_for('profile', email=email))
     # return render_template('profile.html',image=image)
 
@@ -121,12 +120,12 @@ def verify_user():
 def profile(email):
     print("BROOOOO" + email)
     cur = mysql.connection.cursor()
-    cur.execute('select photo from user_profile where email=%s', [email])
+    cur.execute('select photo, username from user_profile where email=%s', [email])
     result=cur.fetchall()
     cur.close()
     # print("START" + result[0][0])
     image = result[0][0].decode("utf-8")
-    return render_template('profile.html',email=email,image=image)
+    return render_template('profile.html',email=email,image=image,username=result[0][1])
 
 
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from flask import Flask, render_template, redirect, url_for, request,send_from_directory
+from flask import Flask, render_template, redirect, url_for, request,send_from_directory,session
 from flask_mysqldb import MySQL
 import hashlib
 from base64 import b64encode
@@ -109,7 +109,9 @@ def verify_user():
         cur.close()
         dbpassword = result[0][1]
         if passwordhash == dbpassword:
-            return render_template('news_feed.html', email=email) #pass email to identify the user here
+            session['email']=email
+            return redirect(url_for('news_feed'))
+            # return render_template('news_feed.html', email=email) #pass email to identify the user here
         else: #return something that says either email or password is wrong
             return render_template('login.html', email=email)
     return
@@ -130,8 +132,10 @@ def profile(email):
 
 
 
-@app.route('/news_feed/<string:email>' )
-def news_feed(email):
+@app.route('/news_feed' )
+def news_feed():
+    print("HERE")
+    email = session['email']
     return render_template('news_feed.html', email=email)
 
 @app.route('/search_profile',methods=['GET','POST'])
@@ -146,4 +150,6 @@ def search_profile():
 
 
 if __name__ == '__main__':
-    app.run()
+    
+    app.secret_key = 'acquaintance'
+    app.run(debug=True)

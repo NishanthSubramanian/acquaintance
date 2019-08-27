@@ -116,16 +116,22 @@ def verify_user():
             return render_template('login.html', email=email)
     return
 
-
-
-@app.route('/profile/<email>')
-def profile(email):
-    print("BROOOOO" + email)
+@app.route('/myProfile')
+def myProfile():
+    email = session['email']
     cur = mysql.connection.cursor()
     cur.execute('select photo, username from user_profile where email=%s', [email])
     result=cur.fetchall()
     cur.close()
-    # print("START" + result[0][0])
+    image = result[0][0].decode("utf-8")
+    return render_template('myProfile.html',email=email,image=image,username=result[0][1])
+
+@app.route('/profile/<email>')
+def profile(email):
+    cur = mysql.connection.cursor()
+    cur.execute('select photo, username from user_profile where email=%s', [email])
+    result=cur.fetchall()
+    cur.close()
     image = result[0][0].decode("utf-8")
     return render_template('profile.html',email=email,image=image,username=result[0][1])
 

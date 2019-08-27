@@ -47,7 +47,7 @@
 
 
 <body>
-    <div >
+    <div>
         <!-- <div class="wrapper">
         <div class="box">
             <div class="row row-offcanvas row-offcanvas-left"> -->
@@ -135,9 +135,16 @@
                                 </p>
                                 <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text"></i>1234567890
                                 </p>
-                                <a href="/send_friend_request"> <button type="button" class="btn btn-success">Send
+                                <form action="{{ url_for('send_friend_request') }}" method="post">
+                                    <input type="hidden" name="email" id="hidden"><br>
+                                    <script>
+                                        document.getElementById('hidden').value = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
+                                    </script>
+                                    <button class="btn btn-success" type="submit"> Send friend request</button>
+                                </form>
+                                <!-- <a href="/send_friend_request"> <button type="button" class="btn btn-success">Send
                                         friend
-                                        request</button></a>
+                                        request</button></a> -->
                                 <hr>
 
                                 <p class="w3-large"><b><i

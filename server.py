@@ -39,12 +39,6 @@ class Post:
 
 
 
-@app.route('/send_friend_request')
-def chat():
-    return "Send friend reqeust here"
-
-
-
 @app.route('/')
 def identify():
     return render_template('identify.html')
@@ -126,6 +120,31 @@ def myProfile():
     image = result[0][0].decode("utf-8")
     return render_template('myProfile.html',email=email,image=image,username=result[0][1])
 
+@app.route('/edit_profile', methods=['GET', 'POST'])
+def edit_profile():
+    email = session['email']
+    cur = mysql.connection.cursor()
+    if request.method == 'POST':
+        username = request.form['Username']
+        uploadedImage = request.files['profilePhoto']
+        imageBytes = uploadedImage.read()
+        cur.execute('update user_profile set username=%s where email=%s', [username, email])
+        mysql.connection.commit()
+        if imageBytes != '':
+            image = b64encode(imageBytes).decode('utf-8')
+            cur.execute('update user_profile set photo=%s where email=%s', [image, email])
+            mysql.connection.commit()
+    cur.execute('select photo, username from user_profile where email=%s', [email])
+    result=cur.fetchall()
+    cur.close()
+    image = result[0][0].decode("utf-8")
+    print(image)
+    print ("updated")
+    return redirect(url_for('myProfile'))
+
+        
+
+
 @app.route('/profile/<email>')
 def profile(email):
     cur = mysql.connection.cursor()
@@ -135,6 +154,15 @@ def profile(email):
     image = result[0][0].decode("utf-8")
     return render_template('profile.html',email=email,image=image,username=result[0][1])
 
+@app.route('/send_friend_request', methods=['GET', 'POST'])
+def send_friend_request():
+    email1=session['email']
+    email2=request.form['email']
+    cur = mysql.connection.cursor()
+    cur.execute('insert into friend_request values(%s, %s)', [email1, email2])
+    mysql.connection.commit()
+    cur.close()
+    # return render_template('profile.html', ) TODO
 
 
 

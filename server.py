@@ -82,7 +82,7 @@ def register_user():
             mysql.connection.commit()
 
         cur.close()
-    return redirect(url_for('profile', email=email))
+    return redirect(url_for('login'))
     # return render_template('profile.html',image=image)
 
 
@@ -178,7 +178,7 @@ def search_profile():
     cur.execute('select email,username from user_profile')
     results = cur.fetchall()
     cur.close()
-    # print(results)
+    print(results)
     return jsonify(results)
 
 

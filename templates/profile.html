@@ -140,7 +140,13 @@
                                     <script>
                                         document.getElementById('hidden').value = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
                                     </script>
-                                    <button class="btn btn-success" type="submit" onclick="this.disabled=true"> Send friend request</button>
+                                    {% if friend_status == 0 %}
+                                    <button class="btn btn-success" type="submit"> Send friend request </button>
+                                    {% elif friend_status == 1 %}
+                                    <button class="btn btn-success" disabled> Friend request sent </button>
+                                    {% else %}
+                                    <button class="btn btn-success" disabled> You're friends! </button>
+                                    {% endif %}
                                 </form>
                                 <!-- <a href="/send_friend_request"> <button type="button" class="btn btn-success">Send
                                         friend

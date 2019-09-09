@@ -16,8 +16,8 @@ mysql = MySQL(app)
 
 ## create table login_credentials(email varchar(50) primary key not null, password varchar(32) not null);
 ## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob);
-## create table friend_list(email1 varchar(50), email2 varchar(50));
-## create table friend_request(email1 varchar(50), email2 varchar(50));
+## create table friend_list(email1 varchar(50), email2 varchar(50), primary key(email1, email2));
+## create table friend_request(email1 varchar(50), email2 varchar(50), primary key(email1, email2));
 ## create table posts(email varchar(50), text varchar(1000), image mediumblob);
 
 """
@@ -147,12 +147,25 @@ def edit_profile():
 
 @app.route('/profile/<email>')
 def profile(email):
+    email1 = session['email']
+    email2 = email
     cur = mysql.connection.cursor()
     cur.execute('select photo, username from user_profile where email=%s', [email])
     result=cur.fetchall()
+    status = 0
+    if status == 0:
+        cur.execute('select * from friend_request where email1=%s and email2=%s', [email1, email2])
+        r1 = cur.fetchall()
+        if len(r1) == 1:
+            status = 1
+    if status == 0:
+        cur.execute('select * from friend_list where email1=%s and email2=%s', [email1, email2])
+        r2 = cur.fetchall()
+        if len(r2) == 1:
+            status = 2
     cur.close()
     image = result[0][0].decode("utf-8")
-    return render_template('profile.html',email=email,image=image,username=result[0][1])
+    return render_template('profile.html',email=email,image=image,username=result[0][1], friend_status=status)
 
 @app.route('/send_friend_request', methods=['GET', 'POST'])
 def send_friend_request():

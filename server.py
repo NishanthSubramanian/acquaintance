@@ -6,7 +6,7 @@ import hashlib
 from base64 import b64encode
 from flask import jsonify 
 app = Flask(__name__)
-
+import json
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'root'
@@ -162,6 +162,7 @@ def send_friend_request():
     cur.execute('insert into friend_request values(%s, %s)', [email1, email2])
     mysql.connection.commit()
     cur.close()
+    return redirect(url_for('profile', email=email2))
     # return render_template('profile.html', ) TODO
 
 
@@ -178,10 +179,27 @@ def search_profile():
     cur.execute('select email,username from user_profile')
     results = cur.fetchall()
     cur.close()
-    print(results)
+    # print(results)
     return jsonify(results)
 
-
+@app.route('/search_results',methods=['GET','POST'])
+def search_results():
+    username=request.form['username']
+    cur = mysql.connection.cursor()
+    cur.execute('select email,username,photo from user_profile where username=%s',[username])
+    results = cur.fetchall()
+    cur.close()
+    print(results)
+    # displayed = json.dumps(results)
+    user_list = []
+    for user in results:
+        profile = {}
+        profile['email'] = user[0]
+        profile['username'] = user[1]
+        profile['photo'] = user[2].decode("utf-8")
+        user_list.append(profile)
+    print(type(results))
+    return render_template('display_profiles.html',profiles=user_list)
 
 if __name__ == '__main__':
     

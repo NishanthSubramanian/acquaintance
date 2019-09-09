@@ -1,0 +1,16 @@
+<div>
+    {% for profile in profiles %}
+    <div class="container">
+        <a href="/profile/{{profile['email']}}" class="btn btn-info" role="button">
+            <img src="data:;base64,{{profile['photo'] }}" style="width:20%" alt="Avatar">
+            <p>
+                {{profile['username']}}
+            </p>
+            <p>
+                {{profile['email']}}
+            </p>
+            
+        </a>
+    </div>
+    {% endfor %}
+</div>

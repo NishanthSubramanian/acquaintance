@@ -14,11 +14,18 @@ app.config['MYSQL_DB'] = 'acq'
 mysql = MySQL(app)
 
 
-## create table login_credentials(email varchar(50) primary key not null, password varchar(32) not null);
-## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob);
+## create table login_credentials(email varchar(50) primary key, password varchar(32) not null);
+## create table user_profile(email varchar(50) primary key, username varchar(50) not null, photo mediumblob);
 ## create table friend_list(email1 varchar(50), email2 varchar(50), primary key(email1, email2));
 ## create table friend_request(email1 varchar(50), email2 varchar(50), primary key(email1, email2));
-## create table posts(email varchar(50), text varchar(1000), image mediumblob);
+## create table post(email varchar(50) primary key, text varchar(1000), image mediumblob);
+
+## alter table user_profile add constraint email_constraint foreign key(email) references login_credentials(email) on delete cascade;
+## alter table friend_list add constraint email1_constraint foreign key(email1) references login_credentials(email) on delete cascade;
+## alter table friend_list add constraint email2_constraint foreign key(email2) references login_credentials(email) on delete cascade;
+## alter table friend_request add constraint email1_constraint foreign key(email1) references login_credentials(email) on delete cascade;
+## alter table friend_request add constraint email2_constraint foreign key(email2) references login_credentials(email) on delete cascade;
+## alter table post add constraint email_constraint foreign key(email) references login_credentials(email) on delete cascade;
 
 """
 searching for someone would be:

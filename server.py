@@ -14,18 +14,11 @@ app.config['MYSQL_DB'] = 'acq'
 mysql = MySQL(app)
 
 
-## create table login_credentials(email varchar(50) primary key, password varchar(32) not null);
-## create table user_profile(email varchar(50) primary key, username varchar(50) not null, photo mediumblob);
-## create table friend_list(email1 varchar(50), email2 varchar(50), primary key(email1, email2));
-## create table friend_request(email1 varchar(50), email2 varchar(50), primary key(email1, email2));
-## create table post(email varchar(50) primary key, text varchar(1000), image mediumblob);
-
-## alter table user_profile add constraint email_constraint foreign key(email) references login_credentials(email) on delete cascade;
-## alter table friend_list add constraint email1_constraint foreign key(email1) references login_credentials(email) on delete cascade;
-## alter table friend_list add constraint email2_constraint foreign key(email2) references login_credentials(email) on delete cascade;
-## alter table friend_request add constraint email1_constraint foreign key(email1) references login_credentials(email) on delete cascade;
-## alter table friend_request add constraint email2_constraint foreign key(email2) references login_credentials(email) on delete cascade;
-## alter table post add constraint email_constraint foreign key(email) references login_credentials(email) on delete cascade;
+## create table login_credentials(email varchar(50) primary key not null, password varchar(32) not null);
+## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob);
+## create table friend_list(email1 varchar(50), email2 varchar(50));
+## create table friend_request(email1 varchar(50), email2 varchar(50));
+## create table posts(email varchar(50), text varchar(1000), image mediumblob);
 
 """
 searching for someone would be:
@@ -154,44 +147,20 @@ def edit_profile():
 
 @app.route('/profile/<email>')
 def profile(email):
-    email1 = session['email']
-    email2 = email
+    myEmail = session['email']
     cur = mysql.connection.cursor()
     cur.execute('select photo, username from user_profile where email=%s', [email])
     result=cur.fetchall()
-    friend_status = 0
-    if friend_status == 0:
-        cur.execute('select * from friend_request where email1=%s and email2=%s', [email1, email2])
-        r1 = cur.fetchall()
-        if len(r1) == 1:
-            friend_status = 1
-    if friend_status == 0:
-        cur.execute('select * from friend_list where email1=%s and email2=%s', [email1, email2])
-        r2 = cur.fetchall()
-        if len(r2) == 1:
-            friend_status = 2
-    connect_status = 0
-    cur.execute('select * from friend_request where email1=%s and email2=%s', [email2, email1])
-    r3 = cur.fetchall()
-    if len(r3) != 0:
-        connect_status = 1
     cur.close()
     image = result[0][0].decode("utf-8")
-    return render_template('profile.html',email=email,image=image,username=result[0][1], friend_status=friend_status, connect_status=connect_status)
+    return render_template('profile.html',myEmail=myEmail,email=email,image=image,username=result[0][1])
 
 @app.route('/send_friend_request', methods=['GET', 'POST'])
 def send_friend_request():
     email1=session['email']
     email2=request.form['email']
     cur = mysql.connection.cursor()
-    cur.execute('select * from friend_request where email1=%s and email2=%s', [email2, email1])
-    r1 = cur.fetchall()
-    if len(r1) == 1:
-        cur.execute('insert into friend_list values(%s, %s)', [email2, email1])
-        cur.execute('insert into friend_list values(%s, %s)', [email1, email2])
-        cur.execute('delete from friend_request where email1=%s and email2=%s', [email2, email1])
-    else:
-        cur.execute('insert into friend_request values(%s, %s)', [email1, email2])
+    cur.execute('insert into friend_request values(%s, %s)', [email1, email2])
     mysql.connection.commit()
     cur.close()
     return redirect(url_for('profile', email=email2))

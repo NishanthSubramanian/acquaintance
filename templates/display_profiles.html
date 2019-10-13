@@ -65,8 +65,8 @@
 <h1 style="text-align: center;">Search Results</h1>
 <div class="w3-content w3-margin-top" style="max-width:1400px;">
     {% for profile in profiles %}
-    
-    <a class="w3-white w3-text-grey w3-card-4"style="display:block" href="/profile/{{profile['email']}}">
+    {% if profile['email'] != myEmail%}
+    <a class="w3-white w3-text-grey w3-card-4" style="display:block" href="/profile/{{profile['email']}}">
         <div class="w3-row-padding">
             <div class="w3-third">
                 <!-- <div class="w3-white w3-text-grey w3-card-4"> -->
@@ -92,8 +92,9 @@
             </div>
         </div>
     </a>
-<br>
-{% endfor %}
+    <br>
+    {% endif %}
+    {% endfor %}
 </div>
 
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"

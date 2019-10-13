@@ -185,6 +185,7 @@ def search_profile():
 
 @app.route('/search_results',methods=['GET','POST'])
 def search_results():
+    myEmail = session['email']
     username=request.form['username']
     cur = mysql.connection.cursor()
     cur.execute('select email,username,photo from user_profile where username=%s',[username])
@@ -200,7 +201,7 @@ def search_results():
         profile['photo'] = user[2].decode("utf-8")
         user_list.append(profile)
     print(type(results))
-    return render_template('display_profiles.html',profiles=user_list)
+    return render_template('display_profiles.html',myEmail = myEmail, profiles=user_list)
 
 if __name__ == '__main__':
     

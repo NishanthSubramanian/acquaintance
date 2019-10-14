@@ -138,7 +138,7 @@ def edit_profile():
     result=cur.fetchall()
     cur.close()
     image = result[0][0].decode("utf-8")
-    print(image)
+    # print(image)
     print ("updated")
     return redirect(url_for('myProfile'))
 
@@ -148,20 +148,52 @@ def edit_profile():
 @app.route('/profile/<email>')
 def profile(email):
     myEmail = session['email']
+    print(email,myEmail)
     cur = mysql.connection.cursor()
     cur.execute('select photo, username from user_profile where email=%s', [email])
     result=cur.fetchall()
+    cur.execute('select * from friend_request where email1=%s and email2=%s', [email, myEmail])
+    request1Status=cur.fetchall()
+    cur.execute('select * from friend_request where email1=%s and email2=%s', [myEmail, email])
+    request2Status=cur.fetchall()
+    cur.execute('select * from friend_list where email1=%s and email2=%s', [email, myEmail])
+    friendStatus=cur.fetchall()
     cur.close()
     image = result[0][0].decode("utf-8")
-    return render_template('profile.html',myEmail=myEmail,email=email,image=image,username=result[0][1])
+    print(request1Status, request2Status, friendStatus)
+    # print(type(len(request1Status)), len(friendStatus))
+    return render_template('profile.html',myEmail=myEmail,email=email,image=image,username=result[0][1], request1Status=len(request1Status), request2Status=len(request2Status), friendStatus=len(friendStatus))
 
 @app.route('/send_friend_request', methods=['GET', 'POST'])
 def send_friend_request():
     email1=session['email']
+    print(email1)
     email2=request.form['email']
+    friendStatus=request.form['friendStatus']
+    request1Status=request.form['request1Status']
+    request2Status=request.form['request2Status']
+    print(email1, email2, friendStatus, request1Status, request2Status)
+    print(type(int(friendStatus)))
     cur = mysql.connection.cursor()
-    cur.execute('insert into friend_request values(%s, %s)', [email1, email2])
-    mysql.connection.commit()
+    # cur.execute('insert into friend_request values(%s, %s)', [email1, email2])
+    # mysql.connection.commit()
+    if int(request1Status) == 0 and int(friendStatus) == 0 and int(request2Status) == 0:
+        cur.execute('insert into friend_request values(%s, %s)', [email1, email2])
+        mysql.connection.commit()
+    elif int(request1Status) == 1:
+        cur.execute('delete from friend_request where email1=%s and email2=%s', [email2, email1])
+        mysql.connection.commit()
+        cur.execute('insert into friend_list values(%s, %s)', [email1, email2])
+        mysql.connection.commit()
+        cur.execute('insert into friend_list values(%s, %s)', [email2, email1])
+        mysql.connection.commit()
+    elif int(request2Status) == 1:
+        cur.execute('delete from friend_request where email1=%s and email2=%s', [email1, email2])
+        mysql.connection.commit()
+        cur.execute('insert into friend_list values(%s, %s)', [email1, email2])
+        mysql.connection.commit()
+        cur.execute('insert into friend_list values(%s, %s)', [email2, email1])
+        mysql.connection.commit()
     cur.close()
     return redirect(url_for('profile', email=email2))
     # return render_template('profile.html', ) TODO
@@ -170,9 +202,10 @@ def send_friend_request():
 
 @app.route('/news_feed' )
 def news_feed():
-    print("HERE")
-    email = session['email']
-    return render_template('news_feed.html', email=email)
+    # print("HERE")
+    myEmail = session['email']
+    print(myEmail)
+    return render_template('news_feed.html', myEmail=myEmail)
 
 @app.route('/search_profile',methods=['GET','POST'])
 def search_profile():
@@ -186,12 +219,13 @@ def search_profile():
 @app.route('/search_results',methods=['GET','POST'])
 def search_results():
     myEmail = session['email']
+    print(myEmail)
     username=request.form['username']
     cur = mysql.connection.cursor()
     cur.execute('select email,username,photo from user_profile where username=%s',[username])
     results = cur.fetchall()
     cur.close()
-    print(results)
+    # print(results)
     # displayed = json.dumps(results)
     user_list = []
     for user in results:
@@ -200,7 +234,7 @@ def search_results():
         profile['username'] = user[1]
         profile['photo'] = user[2].decode("utf-8")
         user_list.append(profile)
-    print(type(results))
+    # print(type(results))
     return render_template('display_profiles.html',myEmail = myEmail, profiles=user_list)
 
 if __name__ == '__main__':

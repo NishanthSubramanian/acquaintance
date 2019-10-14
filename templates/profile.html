@@ -136,11 +136,22 @@
                                 <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text"></i>1234567890
                                 </p>
                                 <form action="{{ url_for('send_friend_request') }}" method="post">
-                                    <input type="hidden" name="email" id="hidden"><br>
+                                    <input type="hidden" name="email" id="email"><br>
+                                    <input type="hidden" name="friendStatus" id="friendStatus" value={{friendStatus}}><br>
+                                    <input type="hidden" name="request1Status" id="request1Status" value={{request1Status}}><br>
+                                    <input type="hidden" name="request2Status" id="request2Status" value={{request2Status}}><br>
                                     <script>
-                                        document.getElementById('hidden').value = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);
+                                        document.getElementById('email').value = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);                                
                                     </script>
-                                    <button class="btn btn-success" type="submit" onclick="this.disabled=true"> Send friend request</button>
+                                    {% if request1Status == 0 and friendStatus == 0 and request2Status == 0%}
+                                    <button class="btn btn-success" type="submit"> Send connection request</button>
+                                    {% elif request2Status == 1 %}
+                                    <button class="btn btn-success" type="submit" disabled> Connection Sent</button>
+                                    {% elif request1Status == 1 %}
+                                    <button class="btn btn-success" type="submit"> Accept Connection</button>
+                                    {% elif friendStatus == 1 %}
+                                    <button class="btn btn-success" type="submit" disabled> Connected!</button>
+                                    {% endif %}
                                 </form>
                                 <!-- <a href="/send_friend_request"> <button type="button" class="btn btn-success">Send
                                         friend

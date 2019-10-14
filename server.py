@@ -18,7 +18,8 @@ mysql = MySQL(app)
 ## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob);
 ## create table friend_list(email1 varchar(50), email2 varchar(50));
 ## create table friend_request(email1 varchar(50), email2 varchar(50));
-## create table post(email varchar(50), text varchar(1000), image mediumblob);
+## create table post(email varchar(50), post_id int, image mediumblob, text varchar(1000), timestamp date, likes int);
+
 
 """
 searching for someone would be:
@@ -207,9 +208,29 @@ def news_feed():
     print(myEmail)
     return render_template('news_feed.html', myEmail=myEmail)
 
-# @app.route('/upload_post')
-# def upload_post():
-#     myEmail = session['email']
+@app.route('/upload_post', methods=['POST','GET'])
+def upload_post():
+    cur = mysql.connection.cursor()
+    print(request.form)
+    myEmail = session['email']
+    cur.execute('select count(*) from post where email=%s',[myEmail])
+    numberOfPosts = cur.fetchall()
+    image = request.files['image']
+    imageBytes = image.read()
+    text = request.form['text']
+    cur.execute('select current_timestamp()+1')
+    current_timestamp = cur.fetchall()
+    print(type(current_timestamp[0][0]), type(numberOfPosts[0][0]))
+    likes = 0
+    if imageBytes != '':
+        image64 = b64encode(imageBytes).decode('utf-8')
+        cur.execute('insert into post values(%s, %s, %s, %s, %s, %s)', [myEmail, numberOfPosts[0][0] + 1, image64, text, current_timestamp, likes])
+        mysql.connection.commit()
+    else:
+        cur.execute('insert into post values(%s, %d, %s, %s, %d, %d)', [myEmail, numberOfPosts[0][0] + 1, None, text, current_timestamp, likes])
+        mysql.connection.commit()
+    cur.close()
+    return redirect(url_for('news_feed'))
 
 
 @app.route('/search_profile',methods=['GET','POST'])

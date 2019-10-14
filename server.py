@@ -18,7 +18,7 @@ mysql = MySQL(app)
 ## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob);
 ## create table friend_list(email1 varchar(50), email2 varchar(50));
 ## create table friend_request(email1 varchar(50), email2 varchar(50));
-## create table posts(email varchar(50), text varchar(1000), image mediumblob);
+## create table post(email varchar(50), text varchar(1000), image mediumblob);
 
 """
 searching for someone would be:
@@ -206,6 +206,11 @@ def news_feed():
     myEmail = session['email']
     print(myEmail)
     return render_template('news_feed.html', myEmail=myEmail)
+
+# @app.route('/upload_post')
+# def upload_post():
+#     myEmail = session['email']
+
 
 @app.route('/search_profile',methods=['GET','POST'])
 def search_profile():

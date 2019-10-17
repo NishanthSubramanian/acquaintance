@@ -18,7 +18,7 @@ mysql = MySQL(app)
 ## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob);
 ## create table friend_list(email1 varchar(50), email2 varchar(50));
 ## create table friend_request(email1 varchar(50), email2 varchar(50));
-## create table post(email varchar(50), post_id int, image mediumblob, text varchar(1000), timestamp date, likes int);
+## create table post(email varchar(50), post_id int, image mediumblob, text varchar(1000), timestamp timestamp, likes int);
 
 
 """
@@ -206,7 +206,19 @@ def news_feed():
     # print("HERE")
     myEmail = session['email']
     print(myEmail)
-    return render_template('news_feed.html', myEmail=myEmail)
+    posts = []
+    cur = mysql.connection.cursor()
+    # cur.execute('select user_profile.username, post.image, post.text from user_profile inner join () on')
+    cur.execute('select username, image, text from post natural join user_profile where email in (select email2 from friend_list where email1=%s) order by timestamp', [myEmail])
+    results = cur.fetchall()
+    for post in results:
+        temp_post = {}
+        temp_post['username'] = post[0]
+        temp_post['image'] = post[1].decode('utf-8')
+        temp_post['text'] = post[2]
+        posts.append(temp_post)
+        print("''" + str(temp_post['image'])+"''")
+    return render_template('news_feed.html', myEmail=myEmail, posts=posts)
 
 @app.route('/upload_post', methods=['POST','GET'])
 def upload_post():
@@ -218,7 +230,7 @@ def upload_post():
     image = request.files['image']
     imageBytes = image.read()
     text = request.form['text']
-    cur.execute('select current_timestamp()+1')
+    cur.execute('select unix_timestamp()')
     current_timestamp = cur.fetchall()
     print(type(current_timestamp[0][0]), type(numberOfPosts[0][0]))
     likes = 0

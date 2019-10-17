@@ -259,24 +259,53 @@
 						</nav>
 					</div>
 					<!-- /top nav -->
-
+					<br>
+					<br>
+					<br>
 					<div class="padding">
-						<div class="full col-sm-9">
 
+						<!-- Insert for loop here -->
+						{% for post in posts %}
+						<div class="container">
+							<style>
+								.container {
+									/* remember to set a width */
+									width: 40%;
+									margin-right: auto;
+									margin-left: auto;
+									border: 1px solid #cecece;
+									padding: 5px;
+								}
+							</style>
 							<!-- content -->
-
-
-
-
-
+							<div class="card">
+								<div class="card-body">
+									<h3 class="card-title">{{post['username']}}</h3>
+								</div>
+								{% if post['image'] != "" %}
+								<img src="data:;base64,{{post['image'] }}" class="card-img-top" alt="...">
+								<br>
+								{% endif %}
+								<div class="card-body">
+									<h4 class="card-title">{{post['text']}}
+									</h4>
+									<a href="#" class="btn btn-primary">Like</a>
+								</div>
+							</div>
+							<style>
+								.card-img-top {
+									min-width: 50%;
+									max-width: 100%;
+									width: auto;
+									height: auto;
+								}
+							</style>
 
 							<!--/row-->
-
-
-
 						</div>
-
-
+						<!-- end for loop here -->
+						<br>
+						{% endfor %}
 
 					</div><!-- /col-9 -->
 				</div><!-- /padding -->

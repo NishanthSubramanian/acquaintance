@@ -13,6 +13,8 @@
 	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
 	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 	<script type="text/javascript" src="../static/js/bootstrap.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function () {
@@ -274,7 +276,9 @@
 									margin-right: auto;
 									margin-left: auto;
 									border: 1px solid #cecece;
-									padding: 5px;
+									border-radius: 1em;
+									padding: 20px;
+									background-color: #dfdfdf;
 								}
 							</style>
 							<!-- content -->
@@ -284,12 +288,16 @@
 								</div>
 								{% if post['image'] != "" %}
 								<img src="data:;base64,{{post['image'] }}" class="card-img-top" alt="...">
-								<br>
+								<!-- <br> -->
 								{% endif %}
+
 								<div class="card-body">
-									<h4 class="card-title">{{post['text']}}
-									</h4>
-									<a href="#" class="btn btn-primary">Like</a>
+									<h4 class="card-title">{{post['text']}}</h4>
+									<hr style="height:1px;border:none;color:#333;background-color:#333;" />
+									<div style="padding-left:8px;padding-bottom:8px"><a href="#"><i
+												class="fa fa-thumbs-up" style="font-size:24px"></i></a>
+										$$ people liked this
+									</div>
 								</div>
 							</div>
 							<style>

@@ -217,7 +217,7 @@ def news_feed():
         temp_post['image'] = post[1].decode('utf-8')
         temp_post['text'] = post[2]
         posts.append(temp_post)
-        print("''" + str(temp_post['image'])+"''")
+        # print("''" + str(temp_post['image'])+"''")
     return render_template('news_feed.html', myEmail=myEmail, posts=posts)
 
 @app.route('/upload_post', methods=['POST','GET'])

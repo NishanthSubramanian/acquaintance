@@ -320,7 +320,9 @@ def search_results():
     # print(type(results))
     return render_template('display_profiles.html', myEmail=myEmail, profiles=user_list)
 
-
+@app.route('/chat')
+def chat():
+    return render_template('chat.html')
 if __name__ == '__main__':
 
     app.secret_key = 'acquaintance'

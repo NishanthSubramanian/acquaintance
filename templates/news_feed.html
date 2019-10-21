@@ -230,7 +230,16 @@
 											class="glyphicon glyphicon-plus"></i> Post</a>
 								</li>
 								<li>
-									<a href="/chat"><span class="badge">Chat</span></a>
+
+										<form class="form center-block" action="/chat/{{myEmail}}" method="POST">
+											<div style="padding-left:8px;padding-bottom:8px">
+												<input type="hidden" name="message_to_send" id="message_to_send" value="">
+												<button type="submit">
+												<span class="badge">Chat</span></button>
+											</div>
+										</form>
+
+									<!-- <a href=""></a> -->
 								</li>
 							</ul>
 							<ul class="nav navbar-nav navbar-right">

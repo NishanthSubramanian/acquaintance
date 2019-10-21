@@ -21,7 +21,8 @@ mysql = MySQL(app)
 ## create table friend_list(email1 varchar(50), email2 varchar(50));
 ## create table friend_request(email1 varchar(50), email2 varchar(50));
 ## create table post(email varchar(50), post_id int, image mediumblob, text varchar(1000), timestamp timestamp, likes int);
-## create table likes(poster_email varchar(50), post_id int, liker_email varchar(50))
+## create table likes(poster_email varchar(50), post_id int, liker_email varchar(50));
+## create table chat(email1 varchar(50), email2 varchar(50), message varchar(2000), timestamp timestamp);
 
 
 """
@@ -36,11 +37,6 @@ or we should probably join the tables and then choose
 checking for friend requests would be:
     select email1 from friend_request where email2=currentemail;
 """
-
-
-class Post:
-    text = ''
-    image = NotImplemented
 
 socketio = SocketIO(app)
 users = {}
@@ -324,11 +320,54 @@ def search_results():
     # print(type(results))
     return render_template('display_profiles.html', myEmail=myEmail, profiles=user_list)
 
-@app.route('/chat')
-def chat():
+@app.route('/chat/<email>', methods=['POST'])
+def chat(email):
     myEmail = session['email']
-    print(myEmail)
-    return render_template('chat.html',myEmail=myEmail)
+    print(myEmail + ' - ' + email)
+    cur = mysql.connection.cursor()
+    cur.execute('select username from user_profile where email=%s', [email])
+    res = cur.fetchall()
+    username = res[0][0]
+
+    message_sent = request.form['message_to_send']
+    print('message:' + message_sent + ";")
+
+    # print(email)
+    #fetching friends for sidebar
+    cur.execute('select email2, username from friend_list inner join user_profile on email2=email where email1=%s', [myEmail])
+    res = cur.fetchall()
+    friends = []
+    for item in res:
+        temp_friend = {}
+        temp_friend['email'] = item[0]
+        temp_friend['username'] = item[1]
+        friends.append(temp_friend)
+
+    #fetching messages for chat
+    messages = []
+    if email == myEmail:
+        pass
+    else:
+        cur.execute('select * from chat where (email1=%s and email2=%s) or (email1=%s and email2=%s) order by timestamp', [myEmail, email, email, myEmail])
+        res = cur.fetchall()
+        for item in res:
+            temp_message = {}
+            temp_message['email1'] = item[0]
+            temp_message['email2'] = item[1]
+            temp_message['text'] = item[2]
+            temp_message['timestamp'] = item[3]
+            messages.append(temp_message)
+
+    return render_template('chat.html',myEmail=myEmail, friends=friends, messages=messages, email=email, username=username)
+
+# @app.route('/update_chat_message', methods=['POST'])
+# def update_chat_message:
+#     myEmail = session['email']
+#     friends = request.form['friends']
+#     # messages = messages
+#     email= request.form['email']
+#     username= request.form['username']
+#     return render_template('chat.html', )
 
 @socketio.on('email', namespace='/private')
 def receive_username(email):

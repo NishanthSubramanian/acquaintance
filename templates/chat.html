@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Whatsapp Template</title>
+    <title>Acquaintance</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -63,20 +63,36 @@
                                 </div>
                             </div>
                             <div class="col-sm-9 col-xs-9 sideBar-main">
-                                <div class="row">
+                                <!-- <form class="form center-block" action="/chat" method="POST"> -->
+                                {% for friend in friends %}
+
+                                <form class="form center-block" action="/chat/{{friend['email']}}" method="POST">
+                                    <div class="row" id="send_private_message">
+                                        <div class="col-sm-8 col-xs-8 sideBar-name">
+                                            <input type="hidden" name="message_to_send" id="message_to_send" value="">
+                                            <button type="submit">
+                                                <span class="name-meta">{{ friend['username'] }}
+                                                </span></button>
+                                        </div>
+
+
+                                    </div>
+                                </form>
+
+                                <div class="row" onclick=location.href="/chat/{{friend['email']}}">
                                     <div class="col-sm-8 col-xs-8 sideBar-name">
-                                        <span class="name-meta">Ankit Jain
+                                        <span class="name-meta">{{ friend['username'] }}
                                         </span>
                                     </div>
-                                    <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
+                                    <!-- <div class="col-sm-4 col-xs-4 pull-right sideBar-time">
                                         <span class="time-meta pull-right">18:18
                                         </span>
-                                    </div>
+                                    </div> -->
                                 </div>
+                                {% endfor %}
+                                <!-- </form> -->
                             </div>
                         </div>
-
-
                     </div>
                     <!-- Sidebar End -->
                 </div>
@@ -140,6 +156,7 @@
             <!-- New Message Sidebar End -->
 
             <!-- Conversation Start -->
+
             <div class="col-sm-8 conversation">
                 <!-- Heading -->
                 <div class="row heading">
@@ -149,7 +166,7 @@
                         </div>
                     </div>
                     <div class="col-sm-8 col-xs-7 heading-name">
-                        <a class="heading-name-meta" id="send_to_email">c
+                        <a class="heading-name-meta"> {{username}}
                         </a>
                         <!-- <span class="heading-online">Online</span> -->
                     </div>
@@ -159,22 +176,29 @@
                 </div>
                 <!-- Heading End -->
 
+
                 <!-- Message Box -->
                 <div class="row message" id="conversation">
+                    {% if messages|length >0 %}
+                    {% for message in messages %}
                     <div class="row message-body">
                         <div class="col-sm-12 message-main-receiver">
-                            <div class="receiver">
-                                <div class="message-text">
-                                    Hyy, Its Awesome..!
+                            {% if message['email1'] == myEmail %}
+                            <div class="sender">
+                                {% else %}
+                                <div class="receiver">
+                                    {% endif %}
+                                    <div class="message-text">
+                                        {{message['text']}}
+                                    </div>
+                                    <span class="message-time pull-right">
+                                        {{message['timestamp']}}
+                                    </span>
                                 </div>
-                                <span class="message-time pull-right">
-                                    Sun
-                                </span>
                             </div>
                         </div>
-                    </div>
-                    <ul id="messages"></ul>
-                    <div class="row message-body">
+                        <ul id="messages"></ul>
+                        <!-- <div class="row message-body">
                         <div class="col-sm-12 message-main-sender">
                             <div class="sender">
                                 <div class="message-text">
@@ -185,44 +209,71 @@
                                 </span>
                             </div>
                         </div>
+                    </div> -->
+                        {% endfor %}
+                        {% endif %}
                     </div>
-                </div>
-                <!-- Message Box End -->
 
-                <!-- Reply Box -->
-                <div class="row reply">
-                    <!-- <div class="col-sm-1 col-xs-1 reply-emojis">
+                    <!-- Message Box End -->
+
+                    <!-- Reply Box -->
+                    <div class="row reply">
+                        <!-- <div class="col-sm-1 col-xs-1 reply-emojis">
                         <i class="fa fa-smile-o fa-2x"></i>
                     </div> -->
-                    <div class="col-sm-9 col-xs-9 reply-main">
-                        <textarea class="form-control" rows="1" id="private_message" onclick="myFunction()"></textarea>
-                        <script>
-                            function myFunction() {
-                                // console.log("SHADE")
-                                var evt = new KeyboardEvent('keydown', { 'keyCode': 65, 'which': 65 });
-                                document.dispatchEvent(evt);
-                                // console.log("bru")
-                            }
-                            document.addEventListener('keydown', function (event) {
-                                console.log(event.which);
-                            }); 
-                        </script>
-                    </div>
-                    <!-- <div class="col-sm-1 col-xs-1 reply-recording">
+                        <div class="col-sm-9 col-xs-9 reply-main">
+                            <textarea class="form-control" rows="1" id="private_message"
+                                oninput="myFunction2()"></textarea>
+                            <!-- <script>
+                                function myFunction() {
+                                    // console.log("SHADE")
+                                    var evt = new KeyboardEvent('keydown', { 'keyCode': 65, 'which': 65 });
+                                    document.dispatchEvent(evt);
+                                    document.getElementById("message_to_send").value = document.getElementById('private_message').innerText
+
+                                    // console.log("bru")
+                                }
+                                document.addEventListener('keydown', function (event) {
+                                    console.log(event.which);
+                                }); 
+                            </script> -->
+                        </div>
+                        <!-- <div class="col-sm-1 col-xs-1 reply-recording">
                         <i class="fa fa-microphone fa-2x" aria-hidden="true"></i>
                     </div> -->
-                    <div class="col-sm-1 col-xs-1 reply-send" id="send_private_message">
-                        <i class="fa fa-send fa-2x" aria-hidden="true"></i>
-                    </div>
-                </div>
-                <!-- Reply Box End -->
-            </div>
-            <!-- Conversation End -->
-        </div>
-        <!-- App One End -->
-    </div>
+                        <input id="message_to_send" type="hidden">
+                        <script>
+                            function myFunction2() {
+                                console.log('function2ing');
+                                document.getElementById("message_to_send").value = document.getElementById('private_message').value;
+                                console.log(document.getElementById("message_to_send").value);
+                                console.log(document.getElementById('private_message').value);
+                            }
+                        </script>
 
-    <!-- App End -->
+                        <form class="form center-block" action="/chat/{{email}}" method="POST">
+                            <div style="padding-left:8px;padding-bottom:8px" id="send_private_message">
+                                <input type="hidden" name="message_to_send" id="message_to_send">
+                                <button class="btn btn-primary btn-sm" type="submit">
+                                    <i class="fa fa-send fa-2x" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <!-- 
+                        <div class="col-sm-1 col-xs-1 reply-send" id="send_private_message" onclick=myFunction2();
+                            location.href="/chat/{{email}}" ; send_private_message()>
+                            <i class="fa fa-send fa-2x" aria-hidden="true"></i>
+                        </div> -->
+                    </div>
+                    <!-- Reply Box End -->
+                </div>
+
+                <!-- Conversation End -->
+            </div>
+            <!-- App One End -->
+        </div>
+
+        <!-- App End -->
 </body>
 
 <style>
@@ -883,12 +934,14 @@
         var private_socket = io('http://127.0.0.1:5000/private')
 
         var myEmail = '{{myEmail}}';
+        var email = '{{email}}';
         // $('#send_username').on('click', function () {
         private_socket.emit('email', myEmail);
         // });
 
         $('#send_private_message').on('click', function () {
-            var recipient = document.getElementById('send_to_email').innerText;
+            // var recipient = document.getElementById('send_to_email').innerText;
+            var recipient = email
             // var recipient = $('#send_to_email').val();
             var message_to_send = $('#private_message').val();
             console.log(recipient)

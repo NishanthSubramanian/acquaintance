@@ -14,6 +14,8 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
     <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+
     <!------ Include the above in your HEAD tag ---------->
 </head>
 
@@ -107,6 +109,7 @@
 
                     <!-- sideBar -->
                     <div class="row compose-sideBar">
+
                         <div class="row sideBar-body">
                             <div class="col-sm-3 col-xs-3 sideBar-avatar">
                                 <div class="avatar-icon">
@@ -146,7 +149,7 @@
                         </div>
                     </div>
                     <div class="col-sm-8 col-xs-7 heading-name">
-                        <a class="heading-name-meta">Ankit Jain
+                        <a class="heading-name-meta" id="send_to_email">c
                         </a>
                         <!-- <span class="heading-online">Online</span> -->
                     </div>
@@ -170,7 +173,7 @@
                             </div>
                         </div>
                     </div>
-
+                    <ul id="messages"></ul>
                     <div class="row message-body">
                         <div class="col-sm-12 message-main-sender">
                             <div class="sender">
@@ -192,13 +195,13 @@
                         <i class="fa fa-smile-o fa-2x"></i>
                     </div> -->
                     <div class="col-sm-9 col-xs-9 reply-main">
-                        <textarea class="form-control" rows="1" id="comment" onclick="myFunction()"></textarea>
+                        <textarea class="form-control" rows="1" id="private_message" onclick="myFunction()"></textarea>
                         <script>
                             function myFunction() {
                                 // console.log("SHADE")
                                 var evt = new KeyboardEvent('keydown', { 'keyCode': 65, 'which': 65 });
                                 document.dispatchEvent(evt);
-                                console.log("bru")
+                                // console.log("bru")
                             }
                             document.addEventListener('keydown', function (event) {
                                 console.log(event.which);
@@ -208,7 +211,7 @@
                     <!-- <div class="col-sm-1 col-xs-1 reply-recording">
                         <i class="fa fa-microphone fa-2x" aria-hidden="true"></i>
                     </div> -->
-                    <div class="col-sm-1 col-xs-1 reply-send">
+                    <div class="col-sm-1 col-xs-1 reply-send" id="send_private_message">
                         <i class="fa fa-send fa-2x" aria-hidden="true"></i>
                     </div>
                 </div>
@@ -846,7 +849,7 @@
         }
     }
 </style>
-<script>
+<script type="text/javascript">
     $(".heading-compose").click(function () {
         $(".side-two").css({
             "left": "0"
@@ -858,7 +861,46 @@
             "left": "-100%"
         });
     });
-</script>
 
+
+    $(document).ready(function () {
+
+        var socket = io.connect('http://127.0.0.1:5000');
+
+        var socket_messages = io('http://127.0.0.1:5000/messages')
+
+        // $('#send').on('click', function () {
+        //     var message = $('#message').val();
+
+        //     socket_messages.emit('message from user', message);
+
+        // });
+
+        // socket_messages.on('from flask', function (msg) {
+        //     alert(msg);
+        // });
+
+        var private_socket = io('http://127.0.0.1:5000/private')
+
+        var myEmail = '{{myEmail}}';
+        // $('#send_username').on('click', function () {
+        private_socket.emit('email', myEmail);
+        // });
+
+        $('#send_private_message').on('click', function () {
+            var recipient = document.getElementById('send_to_email').innerText;
+            // var recipient = $('#send_to_email').val();
+            var message_to_send = $('#private_message').val();
+            console.log(recipient)
+            console.log(message_to_send)
+            private_socket.emit('private_message', { 'email': recipient, 'message': message_to_send });
+        });
+
+        private_socket.on('new_private_message', function (msg) {
+            console.log("bro")
+            $("#messages").append('<li>' + msg + '</li>');
+        });
+    });
+</script>
 
 </html>

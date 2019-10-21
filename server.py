@@ -6,6 +6,8 @@ from flask_mysqldb import MySQL
 import hashlib
 from base64 import b64encode
 from flask import jsonify
+from flask_socketio import SocketIO, send, emit
+
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -40,6 +42,8 @@ class Post:
     text = ''
     image = NotImplemented
 
+socketio = SocketIO(app)
+users = {}
 
 @app.route('/')
 def identify():
@@ -322,8 +326,23 @@ def search_results():
 
 @app.route('/chat')
 def chat():
-    return render_template('chat.html')
+    myEmail = session['email']
+    print(myEmail)
+    return render_template('chat.html',myEmail=myEmail)
+
+@socketio.on('email', namespace='/private')
+def receive_username(email):
+    users[email] = request.sid
+    print('email added!')
+
+
+@socketio.on('private_message', namespace='/private')
+def private_message(payload):
+    recipient_session_id = users[payload['email']]
+    message = payload['message']    
+    emit('new_private_message', message, room=recipient_session_id, include_self=True)
+
 if __name__ == '__main__':
 
     app.secret_key = 'acquaintance'
-    app.run(debug=True)
+    socketio.run(app,debug=True)

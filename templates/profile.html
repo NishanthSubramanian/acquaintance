@@ -53,7 +53,6 @@
             <div class="row row-offcanvas row-offcanvas-left"> -->
 
         <div class="column col-sm-12 col-xs-12" id="main">
-
             <div class="navbar navbar-blue navbar-static-top" style="display: block;">
                 <div class="navbar-header">
                     <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".navbar-collapse">
@@ -65,9 +64,9 @@
                     <a href="#" class="navbar-brand logo">N</a>
                 </div>
                 <nav class="collapse navbar-collapse" role="navigation">
-                    <form class="navbar-form navbar-left">
+                    <form class="navbar-form navbar-left" action="/search_results" method="post">
                         <div class="input-group input-group-sm" style="max-width:360px;">
-                            <input type="text" id="myInput" list="json-datalist" placeholder="Search">
+                            <input type="text" id="username" name="username" placeholder="Search">
                             <datalist id="json-datalist">
                             </datalist>
                             <div class="input-group-btn">
@@ -96,14 +95,13 @@
                                     class="glyphicon glyphicon-user"></i>{{myEmail}}</a>
                             <ul class="dropdown-menu">
                                 <li><a href="/myProfile">My Profile</a></li>
-                                <li><a href="">Settings</a></li>
+                                <li><a href="/settings">Settings</a></li>
                                 <li><a href="">Log out</a></li>
                             </ul>
                         </li>
                     </ul>
                 </nav>
             </div>
-            <!-- </div> -->
             <!-- /top nav -->
             <!-- Page Container -->
             <br>
@@ -136,10 +134,13 @@
                                 <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text"></i>1234567890
                                 </p>
                                 <form action="{{ url_for('send_friend_request') }}" method="post">
-                                    <input type="hidden" name="email" id="email"><br>
-                                    <input type="hidden" name="friendStatus" id="friendStatus" value={{friendStatus}}><br>
-                                    <input type="hidden" name="request1Status" id="request1Status" value={{request1Status}}><br>
-                                    <input type="hidden" name="request2Status" id="request2Status" value={{request2Status}}><br>
+                                    <input type="hidden" name="email" id="email">
+                                    <input type="hidden" name="friendStatus" id="friendStatus"
+                                        value={{friendStatus}}>
+                                    <input type="hidden" name="request1Status" id="request1Status"
+                                        value={{request1Status}}>
+                                    <input type="hidden" name="request2Status" id="request2Status"
+                                        value={{request2Status}}>
                                     <script>
                                         document.getElementById('email').value = window.location.href.substring(window.location.href.lastIndexOf('/') + 1);                                
                                     </script>

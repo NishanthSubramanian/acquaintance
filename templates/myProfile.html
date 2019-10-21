@@ -65,9 +65,9 @@
                     <a href="#" class="navbar-brand logo">N</a>
                 </div>
                 <nav class="collapse navbar-collapse" role="navigation">
-                    <form class="navbar-form navbar-left">
+                    <form class="navbar-form navbar-left" action="/search_results" method="post">
                         <div class="input-group input-group-sm" style="max-width:360px;">
-                            <input type="text" id="myInput" list="json-datalist" placeholder="Search">
+                            <input type="text" id="username" name="username" placeholder="Search">
                             <datalist id="json-datalist">
                             </datalist>
                             <div class="input-group-btn">
@@ -152,8 +152,8 @@
                                                 </button>
                                             </div>
                                             <div class="modal-body" style="padding:20px">
-                                                <form action="/edit_profile"
-                                                    method="post" enctype="multipart/form-data">
+                                                <form action="/edit_profile" method="post"
+                                                    enctype="multipart/form-data">
                                                     <div class="form-group">
                                                         <label for="Username" class="col-form-label">Username:</label>
                                                         <input type="text" class="form-control" name="Username">
@@ -185,7 +185,7 @@
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
                                                     data-dismiss="modal">Close</button>
-                                                <button type="submit" class="btn btn-primary">Send message</button>
+                                                <button type="submit" class="btn btn-primary">Make changes</button>
                                             </div>
                                             </form>
                                         </div>

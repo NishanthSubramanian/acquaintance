@@ -294,10 +294,17 @@
 								<div class="card-body">
 									<h4 class="card-title">{{post['text']}}</h4>
 									<hr style="height:1px;border:none;color:#333;background-color:#333;" />
-									<div style="padding-left:8px;padding-bottom:8px"><a href="#"><i
-												class="fa fa-thumbs-up" style="font-size:24px"></i></a>
-										$$ people liked this
-									</div>
+									<form class="form center-block" action="/update_likes" method="POST">
+										<div style="padding-left:8px;padding-bottom:8px">
+											<input type="hidden" name="poster_email" id="poster_email"
+												value="{{post['email']}}">
+											<input type="hidden" name="post_id" id="post_id"
+												value="{{post['post_id']}}">
+											<input type="hidden" name="likes" id="likes" value="{{post['likes']}}">
+											<button class="fa fa-thumbs-up" type="submit"></button>
+											{{post['likes']}} people liked this
+										</div>
+									</form>
 								</div>
 							</div>
 							<style>

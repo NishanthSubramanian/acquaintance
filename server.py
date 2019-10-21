@@ -14,12 +14,12 @@ app.config['MYSQL_DB'] = 'acq'
 mysql = MySQL(app)
 
 
-# create table login_credentials(email varchar(50) primary key not null, password varchar(32) not null);
-# create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob);
-# create table friend_list(email1 varchar(50), email2 varchar(50));
-# create table friend_request(email1 varchar(50), email2 varchar(50));
-# create table post(email varchar(50), post_id int, image mediumblob, text varchar(1000), timestamp timestamp, likes int);
-# create table likes(poster_email varchar(50), post_id int, liker_email varchar(50))
+## create table login_credentials(email varchar(50) primary key not null, password varchar(32) not null);
+## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob);
+## create table friend_list(email1 varchar(50), email2 varchar(50));
+## create table friend_request(email1 varchar(50), email2 varchar(50));
+## create table post(email varchar(50), post_id int, image mediumblob, text varchar(1000), timestamp timestamp, likes int);
+## create table likes(poster_email varchar(50), post_id int, liker_email varchar(50))
 
 
 """
@@ -224,8 +224,7 @@ def news_feed():
     posts = []
     cur = mysql.connection.cursor()
     # cur.execute('select user_profile.username, post.image, post.text from user_profile inner join () on')
-    cur.execute(
-        'select username, image, text, likes, email, post_id from post natural join user_profile where email in (select email2 from friend_list where email1=%s) order by timestamp', [myEmail])
+    cur.execute('select username, image, text, likes, email, post_id from post natural join user_profile where email in (select email2 from friend_list where email1=%s) order by timestamp', [myEmail])
     results = cur.fetchall()
     for post in results:
         temp_post = {}
@@ -239,7 +238,6 @@ def news_feed():
         # print("''" + str(temp_post['image'])+"''")
     return render_template('news_feed.html', myEmail=myEmail, posts=posts)
 
-
 @app.route('/update_likes', methods=['POST'])
 def update_likes():
     myEmail = session['email']
@@ -247,29 +245,23 @@ def update_likes():
     post_id = request.form['post_id']
     likes = request.form['likes']
     cur = mysql.connection.cursor()
-    cur.execute('select * from likes where poster_email=%s and post_id=%s and liker_email=%s',
-                [poster_email, int(post_id), myEmail])
+    cur.execute('select * from likes where poster_email=%s and post_id=%s and liker_email=%s', [poster_email, int(post_id), myEmail])
     results = cur.fetchall()
     print('results:', results, len(results))
     if len(results) == 0:
-        cur.execute('update post set likes=%s where email=%s and post_id=%s', [
-                    int(likes)+1, poster_email, post_id])
+        cur.execute('update post set likes=%s where email=%s and post_id=%s', [int(likes)+1, poster_email, post_id])
         mysql.connection.commit()
-        cur.execute('insert into likes values(%s, %s, %s)',
-                    [poster_email, post_id, myEmail])
+        cur.execute('insert into likes values(%s, %s, %s)', [poster_email, post_id, myEmail])
         mysql.connection.commit()
     else:
-        cur.execute('update post set likes=%s where email=%s and post_id=%s', [
-                    int(likes)-1, poster_email, post_id])
+        cur.execute('update post set likes=%s where email=%s and post_id=%s', [int(likes)-1, poster_email, post_id])
         mysql.connection.commit()
-        cur.execute('delete from likes where poster_email=%s and post_id=%s and liker_email=%s', [
-                    poster_email, post_id, myEmail])
+        cur.execute('delete from likes where poster_email=%s and post_id=%s and liker_email=%s', [poster_email, post_id, myEmail])
         mysql.connection.commit()
     cur.close()
     return redirect(url_for('news_feed'))
 
-
-@app.route('/upload_post', methods=['POST', 'GET'])
+@app.route('/upload_post', methods=['POST','GET'])
 def upload_post():
     cur = mysql.connection.cursor()
     print(request.form)

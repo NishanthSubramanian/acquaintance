@@ -222,8 +222,8 @@
                         <i class="fa fa-smile-o fa-2x"></i>
                     </div> -->
                         <div class="col-sm-9 col-xs-9 reply-main">
-                            <textarea class="form-control" rows="1" id="private_message"
-                                oninput="myFunction2()"></textarea>
+                            <textarea class="form-control" rows="1" id="message_to_send" name="message_to_send"
+                                form="textform"></textarea>
                             <!-- <script>
                                 function myFunction() {
                                     // console.log("SHADE")
@@ -241,21 +241,22 @@
                         <!-- <div class="col-sm-1 col-xs-1 reply-recording">
                         <i class="fa fa-microphone fa-2x" aria-hidden="true"></i>
                     </div> -->
-                        <input id="message_to_send" type="hidden">
-                        <script>
+                        <!-- <input id="message_to_send" type="hidden"> -->
+                        <!-- <script>
                             function myFunction2() {
                                 console.log('function2ing');
                                 document.getElementById("message_to_send").value = document.getElementById('private_message').value;
                                 console.log(document.getElementById("message_to_send").value);
                                 console.log(document.getElementById('private_message').value);
+                                return document.getElementById("message_to_send").value;
                             }
-                        </script>
+                        </script> -->
 
-                        <form class="form center-block" action="/chat/{{email}}" method="POST">
+                        <form class="form center-block" action="/chat/{{email}}" method="post" id="textform">
                             <div style="padding-left:8px;padding-bottom:8px" id="send_private_message">
-                                <input type="hidden" name="message_to_send" id="message_to_send">
+                                <!-- <input type="hidden" name="message_to_send" id="message_to_send"> -->
                                 <button class="btn btn-primary btn-sm" type="submit">
-                                    <i class="fa fa-send fa-2x" aria-hidden="true"></i>
+                                    <i class="fa fa-send fa-2x" type="submit" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </form>
@@ -943,7 +944,7 @@
             // var recipient = document.getElementById('send_to_email').innerText;
             var recipient = email
             // var recipient = $('#send_to_email').val();
-            var message_to_send = $('#private_message').val();
+            var message_to_send = $('#message_to_send').val();
             console.log(recipient)
             console.log(message_to_send)
             private_socket.emit('private_message', { 'email': recipient, 'message': message_to_send });

@@ -25,7 +25,10 @@ mysql = MySQL(app)
 ## create table likes(poster_email varchar(50), post_id int, liker_email varchar(50));
 ## create table chat(email1 varchar(50), email2 varchar(50), message varchar(2000), timestamp bigint);
 ## create table socket(email varchar(50), socket_id varchar(50));
-
+## create table admin_credentials(email varchar(50) primary key not null, password varchar(32) not null);
+## insert into admin_credentials values('admin1','a722c63db8ec8625af6cf71cb8c2d939');
+## insert into admin_credentials values('admin2','c1572d05424d0ecb2a65ec6a82aeacbf');
+## insert into admin_credentials values('admin3','3afc79b597f88a72528e864cf81856d2');
 
 """
 searching for someone would be:
@@ -339,7 +342,7 @@ def chat(email):
     if message_sent != '':
         cur.execute('insert into chat values(%s, %s, %s, %s)', [myEmail, email, message_sent, current_timestamp[0][0]])
         mysql.connection.commit()
-        cur.connection.commit()
+        # cur.connection.commit()
         cur.close()
     # print(email)
     #fetching friends for sidebar
@@ -400,9 +403,71 @@ def private_message(payload):
     cur.execute('select unix_timestamp()')
     current_timestamp = cur.fetchall()
     cur.execute('insert into chat values(%s,%s,%s,%s)', [myEmail, payload['email'], message, current_timestamp[0][0]])
-    cur.connection.commit()
+    mysql.connection.commit()
+    # cur.connection.commit()
     cur.close()
     emit('new_private_message', message, room=recipient_session_id, include_self=True)
+
+@app.route('/admin_login')
+def admin_login():
+    return render_template('admin_login.html')
+
+@app.route('/verify_admin', methods=['GET', 'POST'])
+def verify_admin():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['pass']
+        passwordhash = hashlib.md5(password.encode()).hexdigest()
+        cur = mysql.connection.cursor()
+        cur.execute('select * from admin_credentials where email=%s', [email])
+        result = cur.fetchall()  # fetch all entries which satisfied the query
+        cur.close()
+        dbpassword = result[0][1]
+        if passwordhash == dbpassword:
+            session['email'] = email
+            return redirect(url_for('admin_feed'))
+            # return render_template('news_feed.html', email=email) #pass email to identify the user here
+        else:  # return something that says either email or password is wrong
+            return render_template('admin_login.html', email=email)
+    return
+
+
+@app.route('/admin_feed')
+def admin_feed():
+    # print("HERE")
+    myEmail = session['email']
+    print(myEmail)
+    posts = []
+    cur = mysql.connection.cursor()
+    # cur.execute('select user_profile.username, post.image, post.text from user_profile inner join () on')
+    cur.execute('select username, image, text, likes, email, post_id from post natural join user_profile order by timestamp')
+    results = cur.fetchall()
+    for post in results:
+        temp_post = {}
+        temp_post['username'] = post[0]
+        temp_post['image'] = post[1].decode('utf-8')
+        temp_post['text'] = post[2]
+        temp_post['likes'] = post[3]
+        temp_post['email'] = post[4]
+        temp_post['post_id'] = post[5]
+        posts.append(temp_post)
+        # print("''" + str(temp_post['image'])+"''")
+        print(posts)
+    return render_template('admin_feed.html', myEmail=myEmail, posts=posts)
+
+
+@app.route('/delete_posts',methods=['POST'])
+def delete_posts():
+    post_id = request.form['post_id']
+    email = request.form['poster_email']
+    cur = mysql.connection.cursor()
+    cur.execute('delete from post where email=%s and post_id=%s',[email,post_id])
+    mysql.connection.commit()
+    cur.execute('delete from likes where poster_email=%s and post_id=%s',[email,post_id])
+    mysql.connection.commit()
+    cur.close()
+    return redirect(url_for('admin_feed'))
+
 
 if __name__ == '__main__':
 

@@ -20,6 +20,7 @@
 
 	<link rel="stylesheet" type="text/css" href="../static/css/util.css">
 	<link rel="stylesheet" type="text/css" href="../static/css/main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
 
 </head>
 
@@ -112,6 +113,12 @@
 			$('#x').val(tmppath);
 			console.log(tmppath)
 		});
+
+
+		var private_socket = io('http://127.0.0.1:5000/private');
+		var myEmail = '{{email}}';
+		private_socket.emit('email', myEmail);
+
 	</script>
 
 </body>

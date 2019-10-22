@@ -24,6 +24,7 @@ mysql = MySQL(app)
 ## create table post(email varchar(50), post_id int, image mediumblob, text varchar(1000), timestamp bigint, likes int);
 ## create table likes(poster_email varchar(50), post_id int, liker_email varchar(50));
 ## create table chat(email1 varchar(50), email2 varchar(50), message varchar(2000), timestamp bigint);
+## create table socket(email varchar(50), socket_id varchar(50));
 
 
 """
@@ -380,11 +381,17 @@ def chat(email):
 @socketio.on('email', namespace='/private')
 def receive_username(email):
     users[email] = request.sid
+    # cur = mysql.connection.cursor()
+    # cur.execute('insert into socket values(%s, %s)', [email, request.sid])
+    # mysql.connection.commit()
+    # cur.close()
     print('email added!')
 
 
 @socketio.on('private_message', namespace='/private')
 def private_message(payload):
+    # cur = mysql.connection.cursor()
+    # cur.execute()
     recipient_session_id = users[payload['email']]
     message = payload['message']   
     print(recipient_session_id, message) 

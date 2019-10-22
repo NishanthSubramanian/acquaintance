@@ -20,9 +20,9 @@ mysql = MySQL(app)
 ## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob);
 ## create table friend_list(email1 varchar(50), email2 varchar(50));
 ## create table friend_request(email1 varchar(50), email2 varchar(50));
-## create table post(email varchar(50), post_id int, image mediumblob, text varchar(1000), timestamp timestamp, likes int);
+## create table post(email varchar(50), post_id int, image mediumblob, text varchar(1000), timestamp bigint, likes int);
 ## create table likes(poster_email varchar(50), post_id int, liker_email varchar(50));
-## create table chat(email1 varchar(50), email2 varchar(50), message varchar(2000), timestamp timestamp);
+## create table chat(email1 varchar(50), email2 varchar(50), message varchar(2000), timestamp bigint);
 
 
 """
@@ -331,6 +331,12 @@ def chat(email):
 
     message_sent = request.form['message_to_send']
     print('message:' + message_sent + ";")
+    cur.execute('select unix_timestamp()')
+    current_timestamp = cur.fetchall()
+    print(current_timestamp)
+    if message_sent != '':
+        cur.execute('insert into chat values(%s, %s, %s, %s)', [myEmail, email, message_sent, current_timestamp[0][0]])
+        mysql.connection.commit()
 
     # print(email)
     #fetching friends for sidebar

@@ -334,9 +334,9 @@ def chat(email):
     cur.execute('select unix_timestamp()')
     current_timestamp = cur.fetchall()
     print(current_timestamp)
-    if message_sent != '':
-        cur.execute('insert into chat values(%s, %s, %s, %s)', [myEmail, email, message_sent, current_timestamp[0][0]])
-        mysql.connection.commit()
+    # if message_sent != '':
+    #     cur.execute('insert into chat values(%s, %s, %s, %s)', [myEmail, email, message_sent, current_timestamp[0][0]])
+    #     mysql.connection.commit()
 
     # print(email)
     #fetching friends for sidebar
@@ -384,7 +384,13 @@ def receive_username(email):
 @socketio.on('private_message', namespace='/private')
 def private_message(payload):
     recipient_session_id = users[payload['email']]
-    message = payload['message']    
+    message = payload['message']   
+    print(recipient_session_id, message) 
+    cur = mysql.connection.cursor()
+    myEmail = session['email']
+    cur.execute('insert into chat values(%s,%s,%s,%s)', [myEmail, "b", message, "1"])
+    cur.connection.commit()
+    cur.close()
     emit('new_private_message', message, room=recipient_session_id, include_self=True)
 
 if __name__ == '__main__':

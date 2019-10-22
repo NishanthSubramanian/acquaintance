@@ -197,7 +197,7 @@
                                 </div>
                             </div>
                         </div>
-                        <ul id="messages"></ul>
+                        <!-- <ul id="messages"></ul> -->
                         <!-- <div class="row message-body">
                         <div class="col-sm-12 message-main-sender">
                             <div class="sender">
@@ -222,7 +222,7 @@
                         <i class="fa fa-smile-o fa-2x"></i>
                     </div> -->
                         <div class="col-sm-9 col-xs-9 reply-main">
-                            <textarea class="form-control" rows="1" id="message_to_send" name="message_to_send"
+                            <textarea class="form-control blah" rows="1" id="message_to_send" name="message_to_send"
                                 form="textform"></textarea>
                             <!-- <script>
                                 function myFunction() {
@@ -255,8 +255,8 @@
                         <form class="form center-block" action="/chat/{{email}}" method="post" id="textform">
                             <div style="padding-left:8px;padding-bottom:8px" id="send_private_message">
                                 <!-- <input type="hidden" name="message_to_send" id="message_to_send"> -->
-                                <button class="btn btn-primary btn-sm" type="submit">
-                                    <i class="fa fa-send fa-2x" type="submit" aria-hidden="true"></i>
+                                <button class="btn btn-primary btn-sm">
+                                    <i class="fa fa-send fa-2x" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </form>
@@ -901,7 +901,7 @@
         }
     }
 </style>
-<script type="text/javascript">
+<script>
     $(".heading-compose").click(function () {
         $(".side-two").css({
             "left": "0"
@@ -940,21 +940,42 @@
         private_socket.emit('email', myEmail);
         // });
 
-        $('#send_private_message').on('click', function () {
-            // var recipient = document.getElementById('send_to_email').innerText;
+        $('#textform').submit(function (e) {
+            e.preventDefault();
+            console.log("test");
             var recipient = email
             // var recipient = $('#send_to_email').val();
-            var message_to_send = $('#message_to_send').val();
+            var message_to_send = $('.blah').val();
             console.log(recipient)
             console.log(message_to_send)
             private_socket.emit('private_message', { 'email': recipient, 'message': message_to_send });
-        });
 
-        private_socket.on('new_private_message', function (msg) {
-            console.log("bro")
-            $("#messages").append('<li>' + msg + '</li>');
-        });
-    });
-</script>
+            $("#conversation").append('<div class="row message-body"><div class="col-sm-12 message-main-sender"> <div class="sender"><div class="message-text">'+message_to_send+'</div><span class="message-time pull-right">' + Math.round((new Date()).getTime() / 1000) + '</span></div></div></div>');
+
+                // $("#messages").append('<li>' + message_to_send + '</li>');
+                // document.forms['textform'].submit();
+            });
+    
+        // $('#send_private_message').on('click', function () {
+
+                    //     // var recipient = document.getElementById('send_to_email').innerText;
+                    //     var recipient = email
+                    //     // var recipient = $('#send_to_email').val();
+                    //     var message_to_send = $('#message_to_send').val();
+                    //     console.log(recipient)
+                    //     console.log(message_to_send)
+                    //     private_socket.emit('private_message', { 'email': recipient, 'message': message_to_send });
+                    // });
+
+                    private_socket.on('new_private_message', function (msg) {
+                        console.log("bro")
+
+                        $("#conversation").append('<div class="row message-body"><div class="col-sm-12 message-main-receiver"> <div class="receiver"><div class="message-text">'+msg+'</div><span class="message-time pull-right">' + Math.round((new Date()).getTime() / 1000) + '</span></div></div></div>');
+
+                        // $("#messages").append('<li>' + msg + '</li>');
+                        // document.forms['textform'].submit();
+                    });
+            });
+        </script>
 
 </html>

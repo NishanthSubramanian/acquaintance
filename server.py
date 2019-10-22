@@ -132,6 +132,11 @@ def myProfile():
     image = result[0][0].decode("utf-8")
     return render_template('myProfile.html', email=email, image=image, username=result[0][1])
 
+@app.route('/logout')
+def logout():
+    session['email'] = None
+    return redirect(url_for('identify'))
+
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():

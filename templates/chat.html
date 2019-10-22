@@ -182,23 +182,24 @@
                     {% if messages|length >0 %}
                     {% for message in messages %}
                     <div class="row message-body">
-                        <div class="col-sm-12 message-main-receiver">
-                            {% if message['email1'] == myEmail %}
+                        {% if message['email1'] == myEmail %}
+                        <div class="col-sm-12 message-main-sender">
                             <div class="sender">
                                 {% else %}
-                                <div class="receiver">
-                                    {% endif %}
-                                    <div class="message-text">
-                                        {{message['text']}}
+                                <div class="col-sm-12 message-main-receiver">
+                                    <div class="receiver">
+                                        {% endif %}
+                                        <div class="message-text">
+                                            {{message['text']}}
+                                        </div>
+                                        <span class="message-time pull-right">
+                                            {{message['timestamp']}}
+                                        </span>
                                     </div>
-                                    <span class="message-time pull-right">
-                                        {{message['timestamp']}}
-                                    </span>
                                 </div>
                             </div>
-                        </div>
-                        <!-- <ul id="messages"></ul> -->
-                        <!-- <div class="row message-body">
+                            <!-- <ul id="messages"></ul> -->
+                            <!-- <div class="row message-body">
                         <div class="col-sm-12 message-main-sender">
                             <div class="sender">
                                 <div class="message-text">
@@ -210,21 +211,21 @@
                             </div>
                         </div>
                     </div> -->
-                        {% endfor %}
-                        {% endif %}
-                    </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
 
-                    <!-- Message Box End -->
+                        <!-- Message Box End -->
 
-                    <!-- Reply Box -->
-                    <div class="row reply">
-                        <!-- <div class="col-sm-1 col-xs-1 reply-emojis">
+                        <!-- Reply Box -->
+                        <div class="row reply">
+                            <!-- <div class="col-sm-1 col-xs-1 reply-emojis">
                         <i class="fa fa-smile-o fa-2x"></i>
                     </div> -->
-                        <div class="col-sm-9 col-xs-9 reply-main">
-                            <textarea class="form-control blah" rows="1" id="message_to_send" name="message_to_send"
-                                form="textform"></textarea>
-                            <!-- <script>
+                            <div class="col-sm-9 col-xs-9 reply-main">
+                                <textarea class="form-control blah" rows="1" id="message_to_send" name="message_to_send"
+                                    form="textform"></textarea>
+                                <!-- <script>
                                 function myFunction() {
                                     // console.log("SHADE")
                                     var evt = new KeyboardEvent('keydown', { 'keyCode': 65, 'which': 65 });
@@ -237,12 +238,12 @@
                                     console.log(event.which);
                                 }); 
                             </script> -->
-                        </div>
-                        <!-- <div class="col-sm-1 col-xs-1 reply-recording">
+                            </div>
+                            <!-- <div class="col-sm-1 col-xs-1 reply-recording">
                         <i class="fa fa-microphone fa-2x" aria-hidden="true"></i>
                     </div> -->
-                        <!-- <input id="message_to_send" type="hidden"> -->
-                        <!-- <script>
+                            <!-- <input id="message_to_send" type="hidden"> -->
+                            <!-- <script>
                             function myFunction2() {
                                 console.log('function2ing');
                                 document.getElementById("message_to_send").value = document.getElementById('private_message').value;
@@ -252,29 +253,29 @@
                             }
                         </script> -->
 
-                        <form class="form center-block" action="/chat/{{email}}" method="post" id="textform">
-                            <div style="padding-left:8px;padding-bottom:8px" id="send_private_message">
-                                <!-- <input type="hidden" name="message_to_send" id="message_to_send"> -->
-                                <button class="btn btn-primary btn-sm">
-                                    <i class="fa fa-send fa-2x" aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </form>
-                        <!-- 
+                            <form class="form center-block" action="/chat/{{email}}" method="post" id="textform">
+                                <div style="padding-left:8px;padding-bottom:8px" id="send_private_message">
+                                    <!-- <input type="hidden" name="message_to_send" id="message_to_send"> -->
+                                    <button class="btn btn-primary btn-sm">
+                                        <i class="fa fa-send fa-2x" aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </form>
+                            <!-- 
                         <div class="col-sm-1 col-xs-1 reply-send" id="send_private_message" onclick=myFunction2();
                             location.href="/chat/{{email}}" ; send_private_message()>
                             <i class="fa fa-send fa-2x" aria-hidden="true"></i>
                         </div> -->
+                        </div>
+                        <!-- Reply Box End -->
                     </div>
-                    <!-- Reply Box End -->
+
+                    <!-- Conversation End -->
                 </div>
-
-                <!-- Conversation End -->
+                <!-- App One End -->
             </div>
-            <!-- App One End -->
-        </div>
 
-        <!-- App End -->
+            <!-- App End -->
 </body>
 
 <style>
@@ -950,32 +951,55 @@
             console.log(message_to_send)
             private_socket.emit('private_message', { 'email': recipient, 'message': message_to_send });
 
-            $("#conversation").append('<div class="row message-body"><div class="col-sm-12 message-main-sender"> <div class="sender"><div class="message-text">'+message_to_send+'</div><span class="message-time pull-right">' + Math.round((new Date()).getTime() / 1000) + '</span></div></div></div>');
+            var unix_timestamp = Math.round((new Date()).getTime() / 1000);
+            var date = new Date(unix_timestamp * 1000);
+            // Hours part from the timestamp
+            var hours = date.getHours();
+            // Minutes part from the timestamp
+            var minutes = "0" + date.getMinutes();
+            // Seconds part from the timestamp
+            var seconds = "0" + date.getSeconds();
 
-                // $("#messages").append('<li>' + message_to_send + '</li>');
-                // document.forms['textform'].submit();
-            });
-    
+            // Will display time in 10:30:23 format
+            var formattedTime = date.getFullYear() + '-' + date.getMonth()+1 + '-' + date.getDate() + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+
+            $("#conversation").append('<div class="row message-body"><div class="col-sm-12 message-main-sender"> <div class="sender"><div class="message-text">' + message_to_send + '</div><span class="message-time pull-right">' + formattedTime + '</span></div></div></div>');
+
+            // $("#messages").append('<li>' + message_to_send + '</li>');
+            // document.forms['textform'].submit();
+        });
+
         // $('#send_private_message').on('click', function () {
 
-                    //     // var recipient = document.getElementById('send_to_email').innerText;
-                    //     var recipient = email
-                    //     // var recipient = $('#send_to_email').val();
-                    //     var message_to_send = $('#message_to_send').val();
-                    //     console.log(recipient)
-                    //     console.log(message_to_send)
-                    //     private_socket.emit('private_message', { 'email': recipient, 'message': message_to_send });
-                    // });
+        //     // var recipient = document.getElementById('send_to_email').innerText;
+        //     var recipient = email
+        //     // var recipient = $('#send_to_email').val();
+        //     var message_to_send = $('#message_to_send').val();
+        //     console.log(recipient)
+        //     console.log(message_to_send)
+        //     private_socket.emit('private_message', { 'email': recipient, 'message': message_to_send });
+        // });
 
-                    private_socket.on('new_private_message', function (msg) {
-                        console.log("bro")
+        private_socket.on('new_private_message', function (msg) {
+            console.log("bro")
+            var unix_timestamp = Math.round((new Date()).getTime() / 1000);
+            var date = new Date(unix_timestamp * 1000);
+            // Hours part from the timestamp
+            var hours = date.getHours();
+            // Minutes part from the timestamp
+            var minutes = "0" + date.getMinutes();
+            // Seconds part from the timestamp
+            var seconds = "0" + date.getSeconds();
+            var month = date.getMonth()+1
+            var formattedTime = date.getFullYear() + '-' + month + '-' + date.getDate() + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 
-                        $("#conversation").append('<div class="row message-body"><div class="col-sm-12 message-main-receiver"> <div class="receiver"><div class="message-text">'+msg+'</div><span class="message-time pull-right">' + Math.round((new Date()).getTime() / 1000) + '</span></div></div></div>');
+            // Will display time in 10:30:23 format
+            $("#conversation").append('<div class="row message-body"><div class="col-sm-12 message-main-receiver"> <div class="receiver"><div class="message-text">' + msg + '</div><span class="message-time pull-right">' + formattedTime + '</span></div></div></div>');
 
-                        // $("#messages").append('<li>' + msg + '</li>');
-                        // document.forms['textform'].submit();
-                    });
-            });
-        </script>
+            // $("#messages").append('<li>' + msg + '</li>');
+            // document.forms['textform'].submit();
+        });
+    });
+</script>
 
 </html>

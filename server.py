@@ -7,6 +7,7 @@ import hashlib
 from base64 import b64encode
 from flask import jsonify
 from flask_socketio import SocketIO, send, emit
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['MYSQL_HOST'] = 'localhost'
@@ -334,10 +335,11 @@ def chat(email):
     cur.execute('select unix_timestamp()')
     current_timestamp = cur.fetchall()
     print(current_timestamp)
-    # if message_sent != '':
-    #     cur.execute('insert into chat values(%s, %s, %s, %s)', [myEmail, email, message_sent, current_timestamp[0][0]])
-    #     mysql.connection.commit()
-
+    if message_sent != '':
+        cur.execute('insert into chat values(%s, %s, %s, %s)', [myEmail, email, message_sent, current_timestamp[0][0]])
+        mysql.connection.commit()
+        cur.connection.commit()
+        cur.close()
     # print(email)
     #fetching friends for sidebar
     cur.execute('select email2, username from friend_list inner join user_profile on email2=email where email1=%s', [myEmail])
@@ -361,7 +363,7 @@ def chat(email):
             temp_message['email1'] = item[0]
             temp_message['email2'] = item[1]
             temp_message['text'] = item[2]
-            temp_message['timestamp'] = item[3]
+            temp_message['timestamp'] = datetime.fromtimestamp(item[3]).strftime('%Y-%m-%d %H:%M:%S')
             messages.append(temp_message)
 
     return render_template('chat.html',myEmail=myEmail, friends=friends, messages=messages, email=email, username=username)
@@ -388,7 +390,9 @@ def private_message(payload):
     print(recipient_session_id, message) 
     cur = mysql.connection.cursor()
     myEmail = session['email']
-    cur.execute('insert into chat values(%s,%s,%s,%s)', [myEmail, "b", message, "1"])
+    cur.execute('select unix_timestamp()')
+    current_timestamp = cur.fetchall()
+    cur.execute('insert into chat values(%s,%s,%s,%s)', [myEmail, payload['email'], message, current_timestamp[0][0]])
     cur.connection.commit()
     cur.close()
     emit('new_private_message', message, room=recipient_session_id, include_self=True)
@@ -397,3 +401,4 @@ if __name__ == '__main__':
 
     app.secret_key = 'acquaintance'
     socketio.run(app,debug=True)
+

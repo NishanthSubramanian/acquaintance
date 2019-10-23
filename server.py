@@ -335,9 +335,10 @@ def chat(email):
     myEmail = session['email']
     print(myEmail + ' - ' + email)
     cur = mysql.connection.cursor()
-    cur.execute('select username from user_profile where email=%s', [email])
+    cur.execute('select username, photo from user_profile where email=%s', [email])
     res = cur.fetchall()
     username = res[0][0]
+    photo = res[0][1].decode('utf-8')
 
     message_sent = request.form['message_to_send']
     print('message:' + message_sent + ";")
@@ -351,13 +352,14 @@ def chat(email):
         cur.close()
     # print(email)
     #fetching friends for sidebar
-    cur.execute('select email2, username from friend_list inner join user_profile on email2=email where email1=%s', [myEmail])
+    cur.execute('select email2, username, photo from friend_list inner join user_profile on email2=email where email1=%s', [myEmail])
     res = cur.fetchall()
     friends = []
     for item in res:
         temp_friend = {}
         temp_friend['email'] = item[0]
         temp_friend['username'] = item[1]
+        temp_friend['photo'] = item[2].decode('utf-8')
         friends.append(temp_friend)
 
     #fetching messages for chat
@@ -375,7 +377,7 @@ def chat(email):
             temp_message['timestamp'] = datetime.fromtimestamp(item[3]).strftime('%Y-%m-%d %H:%M:%S')
             messages.append(temp_message)
 
-    return render_template('chat.html',myEmail=myEmail, friends=friends, messages=messages, email=email, username=username)
+    return render_template('chat.html',myEmail=myEmail, friends=friends, messages=messages, email=email, username=username, photo=photo)
 
 # @app.route('/update_chat_message', methods=['POST'])
 # def update_chat_message:

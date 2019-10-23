@@ -231,13 +231,13 @@
 								</li>
 								<li>
 
-										<form class="form center-block" action="/chat/{{myEmail}}" method="POST">
-											<div style="padding-left:8px;padding-bottom:8px">
-												<input type="hidden" name="message_to_send" id="message_to_send" value="">
-												<button type="submit">
+									<form class="form center-block" action="/chat/{{myEmail}}" method="POST">
+										<div style="padding-left:8px;padding-top:8px; margin:auto">
+											<input type="hidden" name="message_to_send" id="message_to_send" value="">
+											<button type="submit">
 												<span class="badge">Chat</span></button>
-											</div>
-										</form>
+										</div>
+									</form>
 
 									<!-- <a href=""></a> -->
 								</li>
@@ -305,10 +305,25 @@
 									<hr style="height:1px;border:none;color:#333;background-color:#333;" />
 									<form class="form center-block" action="/update_likes" method="POST">
 										<div style="padding-left:8px;padding-bottom:8px">
-											<input type="hidden" name="poster_email" id="poster_email" value="{{post['email']}}">
-											<input type="hidden" name="post_id" id="post_id" value="{{post['post_id']}}">
+											<input type="hidden" name="poster_email" id="poster_email"
+												value="{{post['email']}}">
+											<input type="hidden" name="post_id" id="post_id"
+												value="{{post['post_id']}}">
 											<input type="hidden" name="likes" id="likes" value="{{post['likes']}}">
-											<button class="fa fa-thumbs-up" type="submit"></button>
+											<button class="fa fa-thumbs-up button" type="submit">
+												<style>
+													.button {
+														background-color: Transparent;
+														background-repeat: no-repeat;
+														border: none;
+														cursor: pointer;
+														overflow: hidden;
+														outline: none;
+														font-size: 18px;
+														/* color:red; */
+													}
+												</style>
+											</button>
 											{{post['likes']}} people liked this
 										</div>
 									</form>

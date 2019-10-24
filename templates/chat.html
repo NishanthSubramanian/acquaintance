@@ -192,7 +192,7 @@
 
 
                 <!-- Message Box -->
-                <div class="row message" id="conversation">
+                <div class="row message msg_container_base" id="conversation">
                     {% if messages|length >0 %}
                     {% for message in messages %}
                     <div class="row message-body">
@@ -934,7 +934,7 @@
 
 
     $(document).ready(function () {
-
+        $(".msg_container_base").stop().animate({ scrollTop: $(".msg_container_base")[0].scrollHeight}, 1000);
         var socket = io.connect('http://127.0.0.1:5000');
 
         var socket_messages = io('http://127.0.0.1:5000/messages')
@@ -959,6 +959,7 @@
         // });
 
         $('#textform').submit(function (e) {
+            $(".msg_container_base").stop().animate({ scrollTop: $(".msg_container_base")[0].scrollHeight}, 1000);
             e.preventDefault();
             console.log("test");
             var recipient = email

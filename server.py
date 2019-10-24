@@ -24,11 +24,12 @@ mysql = MySQL(app)
 ## create table post(email varchar(50), post_id int, image mediumblob, text varchar(1000), timestamp bigint, likes int);
 ## create table likes(poster_email varchar(50), post_id int, liker_email varchar(50));
 ## create table chat(email1 varchar(50), email2 varchar(50), message varchar(2000), timestamp bigint);
-## create table socket(email varchar(50), socket_id varchar(50));
 ## create table admin_credentials(email varchar(50) primary key not null, password varchar(32) not null);
 ## insert into admin_credentials values('admin1','a722c63db8ec8625af6cf71cb8c2d939');
 ## insert into admin_credentials values('admin2','c1572d05424d0ecb2a65ec6a82aeacbf');
 ## insert into admin_credentials values('admin3','3afc79b597f88a72528e864cf81856d2');
+## create table phone_numbers(email varchar(50), phone_no varchar(12));
+## create table schools(email varchar(50), school varchar(30));
 
 """
 searching for someone would be:
@@ -71,6 +72,23 @@ def signup():
 @app.route('/register_user', methods=['GET', 'POST'])
 def register_user():
     if request.method == 'POST':
+        school = []
+        school_ctr = 0
+        while True:
+            if 'school' + str(school_ctr) in request.form:
+                school.append(request.form['school' + str(school_ctr)])
+                school_ctr = school_ctr + 1
+            else:
+                break
+        phone = []
+        phone_ctr = 0
+        while True:
+            if 'phone_no' + str(phone_ctr) in request.form:
+                phone.append(request.form['phone_no' + str(phone_ctr)])
+                phone_ctr = phone_ctr + 1
+            else:
+                break
+        
         email = request.form['email']
         password = request.form['pass']
         passwordhash = hashlib.md5(password.encode()).hexdigest()
@@ -81,6 +99,13 @@ def register_user():
         # readvalue = filestream.read()
 
         cur = mysql.connection.cursor()
+
+        for item in school:
+            cur.execute('insert into schools values(%s, %s)', [email, item])
+            mysql.connection.commit()
+        for item in phone:
+            cur.execute('insert into phone_numbers values(%s, %s)', [email, item])
+            mysql.connection.commit()
         cur.execute('insert into login_credentials values(%s, %s)',
                     [email, passwordhash])
         mysql.connection.commit()
@@ -143,10 +168,22 @@ def myProfile():
 
         posts.append(temp_post)
 
+    phone = []
+    cur.execute('select phone_no from phone_numbers where email=%s', [email])
+    results = cur.fetchall()
+    print(results)
+    for item in results:
+        phone.append(item[0])
+    school = []
+    cur.execute('select school from schools where email=%s', [email])
+    results = cur.fetchall()
+    for item in results:
+        school.append(item[0])
+
     cur.close()
 
     image = result[0][0].decode("utf-8")
-    return render_template('myProfile.html', posts=posts, email=email, image=image, username=result[0][1])
+    return render_template('myProfile.html', posts=posts, email=email, image=image, username=result[0][1], phone=phone, school=school)
 
 @app.route('/logout')
 def logout():
@@ -197,11 +234,25 @@ def profile(email):
     cur.execute(
         'select * from friend_list where email1=%s and email2=%s', [email, myEmail])
     friendStatus = cur.fetchall()
-    cur.close()
     image = result[0][0].decode("utf-8")
     print(request1Status, request2Status, friendStatus)
-    # print(type(len(request1Status)), len(friendStatus))
-    return render_template('profile.html', myEmail=myEmail, email=email, image=image, username=result[0][1], request1Status=len(request1Status), request2Status=len(request2Status), friendStatus=len(friendStatus))
+
+    phone = []
+    cur.execute('select phone_no from phone_numbers where email=%s', [email])
+    results = cur.fetchall()
+    print(results)
+    for item in results:
+        phone.append(item[0])
+    school = []
+    cur.execute('select school from schools where email=%s', [email])
+    results = cur.fetchall()
+    for item in results:
+        school.append(item[0])
+
+    cur.close()
+    return render_template('profile.html', myEmail=myEmail, email=email, image=image, username=result[0][1],
+        request1Status=len(request1Status), request2Status=len(request2Status), friendStatus=len(friendStatus),
+        phone=phone, school=school)
 
 
 @app.route('/send_friend_request', methods=['GET', 'POST'])

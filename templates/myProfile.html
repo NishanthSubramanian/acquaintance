@@ -127,15 +127,19 @@
                             <br>
                             <div class="w3-container editable">
                                 <h2>{{username}}</h2>
-                                <p><i class="fa fa-briefcase fa-fw w3-margin-right w3-large w3-text edited" id="myP"
+                                <!-- <p><i class="fa fa-briefcase fa-fw w3-margin-right w3-large w3-text edited" id="myP"
                                         contenteditable="false"></i>NITK
-                                </p>
-                                <p><i class="fa fa-home fa-fw w3-margin-right w3-large w3-text edited"></i>Some Address
-                                </p>
+                                </p> -->
                                 <p><i class="fa fa-envelope fa-fw w3-margin-right w3-large w3-text edited"></i>{{email}}
                                 </p>
-                                <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text edited"></i>1234567890
+                                {% for s in school %}
+                                <p><i class="fa fa-home fa-fw w3-margin-right w3-large w3-text edited"></i>{{s}}
                                 </p>
+                                {% endfor %}
+                                {% for p in phone %}
+                                <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text edited"></i>{{p}}
+                                </p>
+                                {% endfor %}
 
                                 <button type="button" class="btn btn-primary" data-toggle="modal"
                                     data-target="#exampleModal" data-whatever="@getbootstrap">Edit</button>
@@ -198,7 +202,7 @@
                                             class="fa fa-asterisk fa-fw w3-margin-right w3-text"></i>Followers</b>
                                 </p>
 
-                                <p>Nishanth</p>
+                                <!-- <p>Nishanth</p>
                                 <p>Cool person</p>
                                 <p>A</p>
                                 <p>Be</p>
@@ -211,7 +215,7 @@
                                 <p>Cool person</p>
                                 <p>A</p>
                                 <p>Be</p>
-                                <br>
+                                <br> -->
                             </div>
                         </div><br>
 

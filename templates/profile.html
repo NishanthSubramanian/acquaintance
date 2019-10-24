@@ -125,14 +125,18 @@
                             <br>
                             <div class="w3-container">
                                 <h2>{{username}}</h2>
-                                <p><i class="fa fa-briefcase fa-fw w3-margin-right w3-large w3-text"></i>NITK
-                                </p>
-                                <p><i class="fa fa-home fa-fw w3-margin-right w3-large w3-text"></i>Some Address
-                                </p>
+                                <!-- <p><i class="fa fa-briefcase fa-fw w3-margin-right w3-large w3-text"></i>NITK
+                                </p> -->
                                 <p><i class="fa fa-envelope fa-fw w3-margin-right w3-large w3-text"></i>{{email}}
                                 </p>
-                                <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text"></i>1234567890
+                                {% for s in school %}
+                                <p><i class="fa fa-home fa-fw w3-margin-right w3-large w3-text edited"></i>{{s}}
                                 </p>
+                                {% endfor %}
+                                {% for p in phone %}
+                                <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text edited"></i>{{p}}
+                                </p>
+                                {% endfor %}
                                 <form action="{{ url_for('send_friend_request') }}" method="post">
                                     <input type="hidden" name="email" id="email">
                                     <input type="hidden" name="friendStatus" id="friendStatus"
@@ -159,7 +163,7 @@
                                         request</button></a> -->
                                 <hr>
 
-                                <p class="w3-large"><b><i
+                                <!-- <p class="w3-large"><b><i
                                             class="fa fa-asterisk fa-fw w3-margin-right w3-text"></i>Followers</b>
                                 </p>
 
@@ -176,7 +180,7 @@
                                 <p>Cool person</p>
                                 <p>A</p>
                                 <p>Be</p>
-                                <br>
+                                <br> -->
                             </div>
                         </div><br>
 

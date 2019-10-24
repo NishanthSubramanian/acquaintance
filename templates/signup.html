@@ -78,7 +78,7 @@
 						<div class="row ">
 							<div class="wrap-input100 validate-input school col-sm-10"
 								data-validate="School is required" id="addon" style="float:left">
-								<input class="input100" type="text" name="school" placeholder="School">
+								<input class="input100" type="text" name="school0" placeholder="School">
 								<span class="focus-input100"></span>
 								<span class="symbol-input100">
 									<i class="fa fa-person" aria-hidden="true"></i>
@@ -95,7 +95,7 @@
 						<div class="row ">
 							<div class="wrap-input100 validate-input Phone col-sm-10"
 								data-validate="Phone number is required" id="addon" style="float:left">
-								<input class="input100" type="text" name="phone_no" placeholder="Phone No">
+								<input class="input100" type="text" name="phone_no0" placeholder="Phone No">
 								<span class="focus-input100"></span>
 								<span class="symbol-input100">
 									<i class="fa fa-person" aria-hidden="true"></i>
@@ -109,13 +109,15 @@
 					</div>
 
 					<script>
+						var school_ctr = 1;
 						document.getElementById('school_show/hide').onclick = function () {
-							var newDiv = $('<div class="wrap-input100 validate-input school" data-validate="School is required" id="addon"><input class="input100" type="text" name="school" placeholder="School"><span class="focus-input100"></span><span class="symbol-input100"><i class="fa fa-person" aria-hidden="true"></i></span></div>');
+							var newDiv = $('<div class="wrap-input100 validate-input school" data-validate="School is required" id="addon"><input class="input100" type="text" name="school' + school_ctr + '" placeholder="School"><span class="focus-input100"></span><span class="symbol-input100"><i class="fa fa-person" aria-hidden="true"></i></span></div>');
 							//newDiv.style.background = "#000";
 							$('#school').append(newDiv);
 						}
+						var phone_ctr = 1;
 						document.getElementById('phone_show/hide').onclick = function () {
-							var newDiv = $('<div class="wrap-input100 validate-input Phone" data-validate="Phone number is required" id="addon"><input class="input100" type="text" name="phone_no" placeholder="Phone No"><span class="focus-input100"></span><span class="symbol-input100"><i class="fa fa-person" aria-hidden="true"></i></span></div>');
+							var newDiv = $('<div class="wrap-input100 validate-input Phone" data-validate="Phone number is required" id="addon"><input class="input100" type="text" name="phone_no' + phone_ctr + '" placeholder="Phone No"><span class="focus-input100"></span><span class="symbol-input100"><i class="fa fa-person" aria-hidden="true"></i></span></div>');
 							//newDiv.style.background = "#000";
 							$('#phone').append(newDiv);
 						}

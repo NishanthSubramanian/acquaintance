@@ -27,23 +27,34 @@
             <div class="col-sm-4 side">
                 <div class="side-one">
                     <!-- Heading -->
-                    <div class="row heading">
-                        <div class="col-sm-3 col-xs-3 heading-avatar">
+                    <div class="row heading" style="padding-right:5px;">
+                        <div class="col-sm-2 col-xs-2 heading-avatar pull-right">
                             <div class="heading-avatar-icon">
-                                <img src="">
+                                <img src=" data:;base64,{{myPhoto}}">
                             </div>
                         </div>
-                        <div class="col-sm-1 col-xs-1  heading-dot  pull-right">
-                            <i class="fa fa-ellipsis-v fa-2x  pull-right" aria-hidden="true"></i>
-                        </div>
-                        <div class="col-sm-2 col-xs-2 heading-compose  pull-right">
+                        <a href="/news_feed">
+                            <div class="col-sm-2 col-xs-2" style="padding:10px;">
+                                <i class="fa fa-long-arrow-left fa-stack-2x " aria-hidden="true"></i>
+                            </div>
+                        </a>
+                        <style>
+                            /* i.fa-long-arrow-left {
+                                display: inline-block;
+                                border-radius: 80px;
+                                box-shadow: 0px 0px 2px #888;
+                                /* padding: 0.5em 0.6em; */
+ /* */
+                            /* } */
+                        </style>
+                        <!-- <div class="col-sm-2 col-xs-2 heading-compose  pull-right">
                             <i class="fa fa-comments fa-2x  pull-right" aria-hidden="true"></i>
-                        </div>
+                        </div> -->
                     </div>
                     <!-- Heading End -->
 
                     <!-- SearchBox -->
-                    <div class="row searchBox">
+                    <!-- <div class="row searchBox">
                         <div class="col-sm-12 searchBox-inner">
                             <div class="form-group has-feedback">
                                 <input id="searchText" type="text" class="form-control" name="searchText"
@@ -51,7 +62,7 @@
                                 <span class="glyphicon glyphicon-search form-control-feedback"></span>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Search Box End -->
                     <!-- sideBar -->
@@ -228,7 +239,7 @@
                             <div class="col-sm-11 col-xs-11 reply-main">
                                 <textarea class="form-control blah" rows="1" id="message_to_send" name="message_to_send"
                                     form="textform"></textarea>
-            
+
                                 <!-- <script>
                                 function myFunction() {
                                     // console.log("SHADE")
@@ -259,10 +270,10 @@
 
                             <form class="form center-block" action="/chat/{{email}}" method="post" id="textform">
                                 <!-- <div style="padding-left:8px;padding-bottom:8px" id="send_private_message"> -->
-                                    <!-- <input type="hidden" name="message_to_send" id="message_to_send"> -->
-                                    <button class="btn btn-primary btn-sm" type="submit">
-                                        <i class="fa fa-send fa-2x" aria-hidden="true"></i>
-                                    </button>
+                                <!-- <input type="hidden" name="message_to_send" id="message_to_send"> -->
+                                <button class="btn btn-primary btn-sm" type="submit">
+                                    <i class="fa fa-send fa-2x" aria-hidden="true"></i>
+                                </button>
                                 <!-- </div> -->
                             </form>
                             <!-- </div> -->
@@ -300,6 +311,7 @@
         /* background: url("") no-repeat fixed center; */
         background-size: cover;
         background-color: #3b5999;
+        /* background: linear-gradient( #3b5999 20%, white 50%); */
     }
 
     .fa-2x {

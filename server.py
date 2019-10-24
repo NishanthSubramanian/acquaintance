@@ -128,9 +128,25 @@ def myProfile():
     cur.execute(
         'select photo, username from user_profile where email=%s', [email])
     result = cur.fetchall()
+    posts = []
+    cur.execute('select username, image, text, likes, email, post_id,timestamp from post natural join user_profile where email = %s order by timestamp', [email])
+    results = cur.fetchall()
+    for post in results:
+        temp_post = {}
+        temp_post['username'] = post[0]
+        temp_post['image'] = post[1].decode('utf-8')
+        temp_post['text'] = post[2]
+        temp_post['likes'] = post[3]
+        temp_post['email'] = post[4]
+        temp_post['post_id'] = post[5]
+        temp_post['timestamp'] = datetime.fromtimestamp(post[6]).strftime('%Y-%m-%d')
+
+        posts.append(temp_post)
+
     cur.close()
+
     image = result[0][0].decode("utf-8")
-    return render_template('myProfile.html', email=email, image=image, username=result[0][1])
+    return render_template('myProfile.html', posts=posts, email=email, image=image, username=result[0][1])
 
 @app.route('/logout')
 def logout():
@@ -234,7 +250,7 @@ def news_feed():
     posts = []
     cur = mysql.connection.cursor()
     # cur.execute('select user_profile.username, post.image, post.text from user_profile inner join () on')
-    cur.execute('select username, image, text, likes, email, post_id from post natural join user_profile where email in (select email2 from friend_list where email1=%s) order by timestamp', [myEmail])
+    cur.execute('select username, image, text, likes, email, post_id,timestamp from post natural join user_profile where email in (select email2 from friend_list where email1=%s) order by timestamp', [myEmail])
     results = cur.fetchall()
     for post in results:
         temp_post = {}
@@ -244,6 +260,7 @@ def news_feed():
         temp_post['likes'] = post[3]
         temp_post['email'] = post[4]
         temp_post['post_id'] = post[5]
+        temp_post['timestamp'] = post[6]
         posts.append(temp_post)
         # print("''" + str(temp_post['image'])+"''")
     return render_template('news_feed.html', myEmail=myEmail, posts=posts)
@@ -340,6 +357,11 @@ def chat(email):
     username = res[0][0]
     photo = res[0][1].decode('utf-8')
 
+    cur.execute('select username, photo from user_profile where email=%s', [myEmail])
+    res1 = cur.fetchall()
+    # myUsername = res1[0][0]
+    myPhoto = res1[0][1].decode('utf-8')
+
     message_sent = request.form['message_to_send']
     print('message:' + message_sent + ";")
     cur.execute('select unix_timestamp()')
@@ -377,7 +399,7 @@ def chat(email):
             temp_message['timestamp'] = datetime.fromtimestamp(item[3]).strftime('%Y-%m-%d %H:%M:%S')
             messages.append(temp_message)
 
-    return render_template('chat.html',myEmail=myEmail, friends=friends, messages=messages, email=email, username=username, photo=photo)
+    return render_template('chat.html',myPhoto=myPhoto,myEmail=myEmail, friends=friends, messages=messages, email=email, username=username, photo=photo)
 
 # @app.route('/update_chat_message', methods=['POST'])
 # def update_chat_message:

@@ -20,7 +20,7 @@
 
 	<link rel="stylesheet" type="text/css" href="../static/css/util.css">
 	<link rel="stylesheet" type="text/css" href="../static/css/main.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
 
 </head>
 
@@ -34,7 +34,7 @@
 				</div>
 
 				<form class="login100-form validate-form" action="/register_user" method="post"
-					enctype="multipart/form-data">
+					enctype="multipart/form-data" id="wrap">
 					<span class="login100-form-title">
 						Member Sign Up
 					</span>
@@ -55,7 +55,13 @@
 					</div>
 
 					<!-- MY ATTEMPT AT IMAGE FETCHING -->
-					<input type="file" name="profilePhoto" size="40" id="profilePhoto">
+					<div style="align-text:center;">
+						<label for="profilePhoto" class="btn btn-primary "
+							style="border-radius: 40px;margin-top:10px;margin-bottom:20px"><i class="fa fa-upload"></i>
+							&nbsp; Upload Profile Picture</label>
+						<input type="file" name="profilePhoto" size="40" id="profilePhoto"
+							style="padding-bottom:7px;display: none">
+					</div>
 
 					<!-- <input name="profilePhotoPath" id="x" type="hidden"> -->
 					<!-- MY ATTEMPT AT IMAGE FETCHING -->
@@ -68,15 +74,52 @@
 							<i class="fa fa-person" aria-hidden="true"></i>
 						</span>
 					</div>
+					<div id="school">
+						<div class="row ">
+							<div class="wrap-input100 validate-input school col-sm-10"
+								data-validate="School is required" id="addon" style="float:left">
+								<input class="input100" type="text" name="school" placeholder="School">
+								<span class="focus-input100"></span>
+								<span class="symbol-input100">
+									<i class="fa fa-person" aria-hidden="true"></i>
+								</span>
+							</div>
 
-					<div class="wrap-input100 validate-input" data-validate="School is required">
-						<input class="input100" type="text" name="school" placeholder="School">
-						<span class="focus-input100"></span>
-						<span class="symbol-input100">
-							<i class="fa fa-person" aria-hidden="true"></i>
-						</span>
+							<div class="add_component btn btn-primary col-sm-2" id="school_show/hide"
+								style="float:right;padding:10px;height:100%;max-width:80%;margin-top:4px"><i href='#'
+									class="fa fa-plus"></i></div>
+						</div>
 					</div>
 
+					<div id="phone">
+						<div class="row ">
+							<div class="wrap-input100 validate-input Phone col-sm-10"
+								data-validate="Phone number is required" id="addon" style="float:left">
+								<input class="input100" type="text" name="phone_no" placeholder="Phone No">
+								<span class="focus-input100"></span>
+								<span class="symbol-input100">
+									<i class="fa fa-person" aria-hidden="true"></i>
+								</span>
+							</div>
+
+							<div class="add_component btn btn-primary col-sm-2" id="phone_show/hide"
+								style="float:right;padding:10px;height:100%;max-width:80%;margin-top:4px"><i href='#'
+									class="fa fa-plus"></i></div>
+						</div>
+					</div>
+
+					<script>
+						document.getElementById('school_show/hide').onclick = function () {
+							var newDiv = $('<div class="wrap-input100 validate-input school" data-validate="School is required" id="addon"><input class="input100" type="text" name="school" placeholder="School"><span class="focus-input100"></span><span class="symbol-input100"><i class="fa fa-person" aria-hidden="true"></i></span></div>');
+							//newDiv.style.background = "#000";
+							$('#school').append(newDiv);
+						}
+						document.getElementById('phone_show/hide').onclick = function () {
+							var newDiv = $('<div class="wrap-input100 validate-input Phone" data-validate="Phone number is required" id="addon"><input class="input100" type="text" name="phone_no" placeholder="Phone No"><span class="focus-input100"></span><span class="symbol-input100"><i class="fa fa-person" aria-hidden="true"></i></span></div>');
+							//newDiv.style.background = "#000";
+							$('#phone').append(newDiv);
+						}
+					</script>
 					<div class="container-login100-form-btn">
 						<button class="login100-form-btn">
 							Sign Up

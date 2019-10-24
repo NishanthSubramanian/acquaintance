@@ -971,14 +971,14 @@
             var unix_timestamp = Math.round((new Date()).getTime() / 1000);
             var date = new Date(unix_timestamp * 1000);
             // Hours part from the timestamp
-            var hours = date.getHours();
+            var hours = "0" + date.getHours();
             // Minutes part from the timestamp
             var minutes = "0" + date.getMinutes();
             // Seconds part from the timestamp
             var seconds = "0" + date.getSeconds();
-
+            var month = parseInt(date.getMonth(),10) + 1
             // Will display time in 10:30:23 format
-            var formattedTime = date.getFullYear() + '-' + date.getMonth() + 1 + '-' + date.getDate() + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+            var formattedTime = date.getFullYear() + '-' + month + '-' + date.getDate() + ' ' + hours.substr(-2) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 
             $("#conversation").append('<div class="row message-body"><div class="col-sm-12 message-main-sender"> <div class="sender"><div class="message-text">' + message_to_send + '</div><span class="message-time pull-right">' + formattedTime + '</span></div></div></div>');
 
@@ -1003,13 +1003,13 @@
             var unix_timestamp = Math.round((new Date()).getTime() / 1000);
             var date = new Date(unix_timestamp * 1000);
             // Hours part from the timestamp
-            var hours = date.getHours();
+            var hours = "0" + date.getHours();
             // Minutes part from the timestamp
             var minutes = "0" + date.getMinutes();
             // Seconds part from the timestamp
             var seconds = "0" + date.getSeconds();
-            var month = date.getMonth() + 1
-            var formattedTime = date.getFullYear() + '-' + month + '-' + date.getDate() + ' ' + hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+            var month = parseInt(date.getMonth(),10) + 1
+            var formattedTime = date.getFullYear() + '-' + month + '-' + date.getDate() + ' ' + hours.substr(-2) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 
             // Will display time in 10:30:23 format
             $("#conversation").append('<div class="row message-body"><div class="col-sm-12 message-main-receiver"> <div class="receiver"><div class="message-text">' + msg + '</div><span class="message-time pull-right">' + formattedTime + '</span></div></div></div>');

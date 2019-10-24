@@ -981,7 +981,7 @@
             var formattedTime = date.getFullYear() + '-' + month + '-' + date.getDate() + ' ' + hours.substr(-2) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 
             $("#conversation").append('<div class="row message-body"><div class="col-sm-12 message-main-sender"> <div class="sender"><div class="message-text">' + message_to_send + '</div><span class="message-time pull-right">' + formattedTime + '</span></div></div></div>');
-
+            $('.blah').val('');
             // $("#messages").append('<li>' + message_to_send + '</li>');
             // document.forms['textform'].submit();
         });
@@ -1013,7 +1013,7 @@
 
             // Will display time in 10:30:23 format
             $("#conversation").append('<div class="row message-body"><div class="col-sm-12 message-main-receiver"> <div class="receiver"><div class="message-text">' + msg + '</div><span class="message-time pull-right">' + formattedTime + '</span></div></div></div>');
-
+            
             // $("#messages").append('<li>' + msg + '</li>');
             // document.forms['textform'].submit();
         });

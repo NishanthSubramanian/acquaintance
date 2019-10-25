@@ -17,19 +17,63 @@ app.config['MYSQL_DB'] = 'acq'
 mysql = MySQL(app)
 
 
-## create table login_credentials(email varchar(50) primary key not null, password varchar(32) not null);
-## create table user_profile(email varchar(50) primary key not null, username varchar(50), photo mediumblob);
-## create table friend_list(email1 varchar(50), email2 varchar(50));
-## create table friend_request(email1 varchar(50), email2 varchar(50));
-## create table post(email varchar(50), post_id int, image mediumblob, text varchar(1000), timestamp bigint, likes int);
-## create table likes(poster_email varchar(50), post_id int, liker_email varchar(50));
-## create table chat(email1 varchar(50), email2 varchar(50), message varchar(2000), timestamp bigint);
-## create table admin_credentials(email varchar(50) primary key not null, password varchar(32) not null);
-## insert into admin_credentials values('admin1','a722c63db8ec8625af6cf71cb8c2d939');
-## insert into admin_credentials values('admin2','c1572d05424d0ecb2a65ec6a82aeacbf');
-## insert into admin_credentials values('admin3','3afc79b597f88a72528e864cf81856d2');
-## create table phone_numbers(email varchar(50), phone_no varchar(12));
-## create table schools(email varchar(50), school varchar(30));
+# create table login_credentials(
+#     email varchar(50) primary key not null,
+#     password varchar(32) not null
+# );
+# create table user_profile(
+#     email varchar(50) primary key not null references login_credentails(email),
+#     username varchar(50) not null,
+#     photo mediumblob
+# );
+# create table friend_list(
+#     email1 varchar(50) not null references login_credentials(email),
+#     email2 varchar(50) not null references login_credentials(email),
+#     constraint pk_constraint primary key(email1, email2)
+# );
+# create table friend_request(
+#     email1 varchar(50) not null references login_credentials(email),
+#     email2 varchar(50) not null references login_credentials(email),
+#     constraint pk_constraint primary key(email1, email2)
+# );
+# create table post(
+#     email varchar(50) not null references login_credentials(email),
+#     post_id int not null,
+#     image mediumblob, 
+#     text varchar(1000) not null, #### either image or text has to be not null, or just make text as not null? 
+#     timestamp bigint not null, 
+#     likes int not null,
+#     constraint pk_constraint primary key(email, post_id)
+# );
+# create table likes(
+#     poster_email varchar(50) not null references login_credentials(email), 
+#     post_id int not null references post(post_id), 
+#     liker_email varchar(50) not null references login_credentials(email),
+#     constraint pk_constraint primary key(poster_email, post_id, liker_email)
+# );
+# create table chat(
+#     email1 varchar(50) not null references login_credentials(email), 
+#     email2 varchar(50) not null references login_credentials(email), 
+#     message varchar(2000) not null, #### need to handle empty messages 
+#     timestamp bigint not null
+# );
+# create table admin_credentials(
+#     email varchar(50) primary key not null, 
+#     password varchar(32) not null
+# );
+# insert into admin_credentials values('admin1','a722c63db8ec8625af6cf71cb8c2d939');
+# insert into admin_credentials values('admin2','c1572d05424d0ecb2a65ec6a82aeacbf');
+# insert into admin_credentials values('admin3','3afc79b597f88a72528e864cf81856d2');
+# create table phone_numbers(
+#     email varchar(50), 
+#     phone_no varchar(12),
+#     constraint pk_constraint primary key(email, phone_no)
+# );
+# create table schools(
+#     email varchar(50), 
+#     school varchar(30),
+#     constraint pk_constraint primary key(email, school)
+# );
 
 """
 searching for someone would be:
@@ -100,12 +144,6 @@ def register_user():
 
         cur = mysql.connection.cursor()
 
-        for item in school:
-            cur.execute('insert into schools values(%s, %s)', [email, item])
-            mysql.connection.commit()
-        for item in phone:
-            cur.execute('insert into phone_numbers values(%s, %s)', [email, item])
-            mysql.connection.commit()
         cur.execute('insert into login_credentials values(%s, %s)',
                     [email, passwordhash])
         mysql.connection.commit()
@@ -114,6 +152,13 @@ def register_user():
             image = b64encode(imageBytes).decode('utf-8')
             cur.execute('insert into user_profile values(%s, %s, %s)', [
                         email, username, image])  # obj or image?
+            mysql.connection.commit()
+
+        for item in school:
+            cur.execute('insert into schools values(%s, %s)', [email, item])
+            mysql.connection.commit()
+        for item in phone:
+            cur.execute('insert into phone_numbers values(%s, %s)', [email, item])
             mysql.connection.commit()
 
         cur.close()
@@ -344,7 +389,7 @@ def upload_post():
     cur = mysql.connection.cursor()
     print(request.form)
     myEmail = session['email']
-    cur.execute('select count(*) from post where email=%s', [myEmail])
+    cur.execute('select max(post_id) from post where email=%s', [myEmail])
     numberOfPosts = cur.fetchall()
     image = request.files['image']
     imageBytes = image.read()

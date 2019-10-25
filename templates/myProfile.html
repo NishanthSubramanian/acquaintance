@@ -164,11 +164,7 @@
                                                     <label for="School" class="col-form-label">School:</label>
                                                     <input type="text" class="form-control" id="School">
                                                 </div>
-                                                <div class="form-group">
-                                                    <label for="Phone_no" class="col-form-label">Phone
-                                                        Number:</label>
-                                                    <input type="text" class="form-control" id="Phone_no">
-                                                </div>
+
                                                 <div class="form-group">
                                                     <label for="recipient-name" class="col-form-label">What:</label>
                                                     <input type="text" class="form-control" id="recipient-name">
@@ -182,7 +178,55 @@
                                                         Photo:</label>
                                                     <input type="file" name="profilePhoto" size="40" id="profilePhoto">
                                                 </div>
+
+                                                <div id="phone">
+                                                    <div class="row ">
+                                                        <div class="form-group col-sm-11">
+                                                            <label for="Phone_no" class="col-form-label">Phone
+                                                                Number:</label>
+                                                            <input type="text" name="phone_no0" class="form-control"
+                                                                id="Phone_no">
+                                                        </div>
+                                                        <div class="add_component btn btn-primary col-sm-1"
+                                                            id="phone_show/hide"
+                                                            style="float:right;padding:10px;height:100%;max-width:80%;margin-top:24px">
+                                                            <i href='#' class="fa fa-plus" style="color:white"></i></div>
+                                                    </div>
+                                                </div>
+
+                                                <div id="school">
+                                                    <div class="row ">
+                                                        <div class="form-group col-sm-11">
+                                                            <label for="School" class="col-form-label">School:</label>
+                                                            <input type="text" name="school0" class="form-control"
+                                                                id="School">
+                                                        </div>
+                                                        <div class="add_component btn btn-primary col-sm-1"
+                                                            id="school_show/hide"
+                                                            style="float:right;padding:10px;height:100%;max-width:80%;margin-top:24px">
+                                                            <i href='#' class="fa fa-plus" style="color:white"></i></div>
+                                                    </div>
+                                                </div>
+
+
                                         </div>
+
+                                        <script>
+                                            var school_ctr = 1;
+                                            document.getElementById('school_show/hide').onclick = function () {
+                                                var newDiv = $('<div class="form-group"><label for="School" class="col-form-label">School:</label><input type="text" class="form-control" id="School" name="school' + school_ctr + '"> </div>');
+                                                //newDiv.style.background = "#000";
+                                                $('#school').append(newDiv);
+                                            }
+                                            var phone_ctr = 1;
+                                            document.getElementById('phone_show/hide').onclick = function () {
+                                                var newDiv = $('<div class="form-group"><label for="Phone_no" class="col-form-label">Phone Number:</label><input type="text" class="form-control" id="Phone_no" name="phone_no' + phone_ctr + '"> </div>');
+                                                //newDiv.style.background = "#000";
+                                                $('#phone').append(newDiv);
+                                                // console.log("hi");
+                                            }
+                                        </script>
+
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-dismiss="modal">Close</button>

@@ -143,10 +143,12 @@ def register_user():
         # readvalue = filestream.read()
 
         cur = mysql.connection.cursor()
-
-        cur.execute('insert into login_credentials values(%s, %s)',
+        try:
+            cur.execute('insert into login_credentials values(%s, %s)',
                     [email, passwordhash])
-        mysql.connection.commit()
+            mysql.connection.commit()
+        except:
+            return '<script>alert("Email already exists");window.location=\'/signup\'</script>'
 
         if imageBytes != '':  # needs to be checked
             image = b64encode(imageBytes).decode('utf-8')
@@ -243,12 +245,13 @@ def edit_profile():
     if request.method == 'POST':
         username = request.form['Username']
         uploadedImage = request.files['profilePhoto']
+        print(uploadedImage)
         imageBytes = uploadedImage.read()
         cur.execute('update user_profile set username=%s where email=%s', [
                     username, email])
         mysql.connection.commit()
-        if imageBytes != '':
-            image = b64encode(imageBytes).decode('utf-8')
+        image = b64encode(imageBytes).decode('utf-8')
+        if image != '':
             cur.execute(
                 'update user_profile set photo=%s where email=%s', [image, email])
             mysql.connection.commit()

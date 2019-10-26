@@ -119,7 +119,8 @@
 
                     <div class="w3-white w3-text-grey w3-card-4">
                         <div class="w3-display-container">
-                            <img src="data:;base64,{{ image }}" style="width:100%" alt="Avatar">
+                            <img src="data:;base64,{{ image }}" style="width:100%" alt="Avatar"
+                                onerror="this.src='https://miro.medium.com/max/560/1*MccriYX-ciBniUzRKAUsAw.png'">
                             <div class="w3-display-bottomleft w3-container w3-text-black">
 
                             </div>
@@ -158,9 +159,10 @@
                                             <form action="/edit_profile" method="post" enctype="multipart/form-data">
                                                 <div class="form-group">
                                                     <label for="Username" class="col-form-label">Username:</label>
-                                                    <input type="text" class="form-control" name="Username">
+                                                    <input type="text" class="form-control" name="Username"
+                                                        value={{username}}>
                                                 </div>
-                                                <div class="form-group">
+                                                <!-- <div class="form-group">
                                                     <label for="School" class="col-form-label">School:</label>
                                                     <input type="text" class="form-control" id="School">
                                                 </div>
@@ -172,14 +174,16 @@
                                                 <div class="form-group">
                                                     <label for="recipient-name" class="col-form-label">Else:</label>
                                                     <input type="text" class="form-control" id="recipient-name">
-                                                </div>
+                                                </div> -->
                                                 <div class="form-group">
                                                     <label for="profilePhoto" class="col-form-label">Profile
                                                         Photo:</label>
-                                                    <input type="file" name="profilePhoto" size="40" id="profilePhoto">
+                                                    <input type="file" name="profilePhoto" size="40" id="profilePhoto"
+                                                        src={{image}}>
                                                 </div>
 
-                                                <div id="phone">
+
+                                                <!-- <div id="phone">
                                                     <div class="row ">
                                                         <div class="form-group col-sm-11">
                                                             <label for="Phone_no" class="col-form-label">Phone
@@ -190,13 +194,15 @@
                                                         <div class="add_component btn btn-primary col-sm-1"
                                                             id="phone_show/hide"
                                                             style="float:right;padding:10px;height:100%;max-width:80%;margin-top:24px">
-                                                            <i href='#' class="fa fa-plus" style="color:white"></i></div>
+                                                            <i href='#' class="fa fa-plus" style="color:white"></i>
+                                                        </div>
                                                     </div>
+
                                                 </div>
 
                                                 <div id="school">
                                                     <div class="row ">
-                                                        <div class="form-group col-sm-11">
+                                                        <div class="form-group">
                                                             <label for="School" class="col-form-label">School:</label>
                                                             <input type="text" name="school0" class="form-control"
                                                                 id="School">
@@ -204,14 +210,15 @@
                                                         <div class="add_component btn btn-primary col-sm-1"
                                                             id="school_show/hide"
                                                             style="float:right;padding:10px;height:100%;max-width:80%;margin-top:24px">
-                                                            <i href='#' class="fa fa-plus" style="color:white"></i></div>
+                                                            <i href='#' class="fa fa-plus" style="color:white"></i>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                </div> -->
 
 
                                         </div>
 
-                                        <script>
+                                        <!-- <script>
                                             var school_ctr = 1;
                                             document.getElementById('school_show/hide').onclick = function () {
                                                 var newDiv = $('<div class="form-group"><label for="School" class="col-form-label">School:</label><input type="text" class="form-control" id="School" name="school' + school_ctr + '"> </div>');
@@ -225,7 +232,7 @@
                                                 $('#phone').append(newDiv);
                                                 // console.log("hi");
                                             }
-                                        </script>
+                                        </script> -->
 
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"

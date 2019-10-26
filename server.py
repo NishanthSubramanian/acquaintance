@@ -280,7 +280,7 @@ def profile(email):
     print(email, myEmail)
     cur = mysql.connection.cursor()
     cur.execute(
-        'select photo, username from user_profile where email=%s', [email])
+        'select photo, username, gender, dob from user_profile where email=%s', [email])
     result = cur.fetchall()
     cur.execute(
         'select * from friend_request where email1=%s and email2=%s', [email, myEmail])
@@ -327,7 +327,7 @@ def profile(email):
     cur.close()
     return render_template('profile.html', myEmail=myEmail, email=email, image=image, username=result[0][1],
                            request1Status=len(request1Status), request2Status=len(request2Status), friendStatus=len(friendStatus),
-                           phone=phone, school=school, posts=posts)
+                           phone=phone, school=school, posts=posts, gender=result[0][2], dob=result[0][3])
 
 
 @app.route('/send_friend_request', methods=['GET', 'POST'])

@@ -138,6 +138,11 @@
                             <p><i class="fa fa-phone fa-fw w3-margin-right w3-large w3-text edited"></i>{{p}}
                             </p>
                             {% endfor %}
+                            <p><i class="fa fa-venus-mars fa-fw w3-margin-right w3-large w3-text edited"></i>{{gender}}
+                            </p>
+                            <p><i class="fa fa-calendar fa-fw w3-margin-right w3-large w3-text edited"></i>{{dob}}
+                            </p>
+
                             <form action="{{ url_for('send_friend_request') }}" method="post">
                                 <input type="hidden" name="email" id="email">
                                 <input type="hidden" name="friendStatus" id="friendStatus" value={{friendStatus}}>
@@ -237,25 +242,25 @@
                             <hr>
                         </div> -->
                         {% if friendStatus==1 %}
-                            {% for post in posts %}
-                            <div class="w3-container">
-                                <h3 class="w3-opacity"><b>{{post['username']}}</b>
-                                    <p style="float:right;font-style: normal; font-size: 0.7em;">{{post['timestamp']}}</p>
-                                </h3>
+                        {% for post in posts %}
+                        <div class="w3-container">
+                            <h3 class="w3-opacity"><b>{{post['username']}}</b>
+                                <p style="float:right;font-style: normal; font-size: 0.7em;">{{post['timestamp']}}</p>
+                            </h3>
 
-                                <!-- <h6 class="w3-text"><i
+                            <!-- <h6 class="w3-text"><i
                                             class="fa fa-calendar fa-fw w3-margin-right">{{post['timestamp']}}</i>
                                     </h6> -->
-                                {% if post['image'] != "" %}
-                                <img src="data:;base64,{{post['image'] }}"
-                                    style="margin:15px;margin-left: 0;max-width: 100%;">
-                                {% endif %}
+                            {% if post['image'] != "" %}
+                            <img src="data:;base64,{{post['image'] }}"
+                                style="margin:15px;margin-left: 0;max-width: 100%;">
+                            {% endif %}
 
-                                <h4>{{post['text']}}</h4>
+                            <h4>{{post['text']}}</h4>
 
-                                <hr>
-                            </div>
-                            {% endfor %}
+                            <hr>
+                        </div>
+                        {% endfor %}
                         {% endif %}
                     </div>
 

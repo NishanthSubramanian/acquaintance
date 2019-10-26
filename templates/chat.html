@@ -30,7 +30,7 @@
                     <div class="row heading" style="padding-right:5px;">
                         <div class="col-sm-2 col-xs-2 heading-avatar pull-right">
                             <div class="heading-avatar-icon">
-                                <img src=" data:;base64,{{myPhoto}}">
+                                <img src=" data:;base64,{{myPhoto}}" onerror="this.src='https://miro.medium.com/max/560/1*MccriYX-ciBniUzRKAUsAw.png'">
                             </div>
                         </div>
                         <a href="/news_feed">
@@ -71,7 +71,8 @@
                             {% for friend in friends %}
                             <div class="col-sm-3 col-xs-3 sideBar-avatar">
                                 <div class="avatar-icon">
-                                    <img src=" data:;base64,{{friend['photo']}} ">
+                                    <img src=" data:;base64,{{friend['photo']}} "
+                                    onerror="this.src='https://miro.medium.com/max/560/1*MccriYX-ciBniUzRKAUsAw.png'">
                                     <!-- <script>console.log({{friend['photo']}});</script> -->
                                 </div>
                             </div>
@@ -140,7 +141,7 @@
                     <!-- sideBar -->
                     <div class="row compose-sideBar">
 
-                        <div class="row sideBar-body">
+                        <!-- <div class="row sideBar-body">
                             <div class="col-sm-3 col-xs-3 sideBar-avatar">
                                 <div class="avatar-icon">
                                     <img src="">
@@ -158,7 +159,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
 
 
                     </div>
@@ -176,7 +177,8 @@
                 <div class="row heading">
                     <div class="col-sm-2 col-md-1 col-xs-3 heading-avatar">
                         <div class="heading-avatar-icon">
-                            <img src="data:;base64,{{ photo }}">
+                            <img src="data:;base64,{{ photo }}"
+                            onerror="this.src='https://miro.medium.com/max/560/1*MccriYX-ciBniUzRKAUsAw.png'">
                         </div>
                     </div>
                     <div class="col-sm-8 col-xs-7 heading-name">

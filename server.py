@@ -77,6 +77,13 @@ mysql = MySQL(app)
 #     constraint pk_constraint primary key(email, school)
 # );
 
+# delimiter $$
+# create procedure get_unix_timestamp()
+# begin
+#     select unix_timestamp();
+# end $$
+# delimiter ;
+
 """
 searching for someone would be:
     select * from user_profile where username=searchname;
@@ -228,6 +235,7 @@ def myProfile():
     results = cur.fetchall()
     print(results)
     for item in results:
+
         phone.append(item[0])
     school = []
     cur.execute('select school from schools where email=%s', [email])
@@ -437,7 +445,8 @@ def upload_post():
     image = request.files['image']
     imageBytes = image.read()
     text = request.form['text']
-    cur.execute('select unix_timestamp()')
+    # cur.execute('select unix_timestamp()')
+    cur.execute('call get_unix_timestamp()')
     current_timestamp = cur.fetchall()
     # print(type(current_timestamp[0][0]), type(numberOfPosts[0][0]))
     likes = 0
@@ -470,8 +479,8 @@ def search_results():
     print(myEmail)
     username = request.form['username']
     cur = mysql.connection.cursor()
-    cur.execute(
-        'select email,username,photo from user_profile where username=%s', [username])
+    # cur.execute('select email,username,photo from user_profile where username=%s', [username])
+    cur.execute('select email,username,photo from user_profile where username like concat(\"%%\",%s,\"%%\")', [username])
     results = cur.fetchall()
     cur.close()
     # print(results)
@@ -506,7 +515,8 @@ def chat(email):
 
     message_sent = request.form['message_to_send']
     print('message:' + message_sent + ";")
-    cur.execute('select unix_timestamp()')
+    # cur.execute('select unix_timestamp()')
+    cur.execute('call get_unix_timestamp()')
     current_timestamp = cur.fetchall()
     print(current_timestamp)
     if message_sent != '':
@@ -576,7 +586,8 @@ def private_message(payload):
     print(recipient_session_id, message)
     cur = mysql.connection.cursor()
     myEmail = session['email']
-    cur.execute('select unix_timestamp()')
+    # cur.execute('select unix_timestamp()')
+    cur.execute('call get_unix_timestamp()')
     current_timestamp = cur.fetchall()
     cur.execute('insert into chat values(%s,%s,%s,%s)', [
                 myEmail, payload['email'], message, current_timestamp[0][0]])

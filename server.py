@@ -238,7 +238,7 @@ def myProfile():
     cur.close()
 
     image = result[0][0].decode("utf-8")
-    return render_template('myProfile.html', posts=posts, email=email, image=image, username=result[0][1], phone=phone, school=school,gender=result[0][2], dob=result[0][3])
+    return render_template('myProfile.html', posts=posts, email=email, image=image, username=result[0][1], phone=phone, school=school, gender=result[0][2], dob=result[0][3])
 
 
 @app.route('/logout')
@@ -318,16 +318,16 @@ def profile(email):
         temp_post['likes'] = post[3]
         temp_post['email'] = post[4]
         temp_post['post_id'] = post[5]
+        print(post[6])
         temp_post['timestamp'] = datetime.fromtimestamp(
             post[6]).strftime('%d-%m-%Y %H:%M')
 
         posts.append(temp_post)
 
-
     cur.close()
     return render_template('profile.html', myEmail=myEmail, email=email, image=image, username=result[0][1],
                            request1Status=len(request1Status), request2Status=len(request2Status), friendStatus=len(friendStatus),
-                           phone=phone, school=school,posts=posts)
+                           phone=phone, school=school, posts=posts)
 
 
 @app.route('/send_friend_request', methods=['GET', 'POST'])
@@ -621,7 +621,7 @@ def admin_feed():
     cur = mysql.connection.cursor()
     # cur.execute('select user_profile.username, post.image, post.text from user_profile inner join () on')
     cur.execute(
-        'select username, image, text, likes, email, post_id from post natural join user_profile order by timestamp')
+        'select username, image, text, likes, email, post_id, timestamp from post natural join user_profile order by timestamp')
     results = cur.fetchall()
     for post in results:
         temp_post = {}
@@ -631,6 +631,8 @@ def admin_feed():
         temp_post['likes'] = post[3]
         temp_post['email'] = post[4]
         temp_post['post_id'] = post[5]
+        temp_post['timestamp'] = datetime.fromtimestamp(
+            post[6]).strftime('%d-%m-%Y %H:%M')
         posts.append(temp_post)
         # print("''" + str(temp_post['image'])+"''")
         print(posts)

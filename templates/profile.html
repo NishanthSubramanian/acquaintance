@@ -117,7 +117,8 @@
 
                     <div class="w3-white w3-text-grey w3-card-4">
                         <div class="w3-display-container">
-                            <img src="data:;base64,{{ image }}" style="width:100%" alt="Avatar" onerror="this.src='https://miro.medium.com/max/560/1*MccriYX-ciBniUzRKAUsAw.png'">
+                            <img src="data:;base64,{{ image }}" style="width:100%" alt="Avatar"
+                                onerror="this.src='https://miro.medium.com/max/560/1*MccriYX-ciBniUzRKAUsAw.png'">
                             <div class="w3-display-bottomleft w3-container w3-text-black">
 
                             </div>
@@ -191,7 +192,7 @@
                         <h2 class="w3-text-grey w3-padding-16"><i
                                 class="fa fa-suitcase fa-fw w3-margin-right w3-xxlarge w3-text"></i>Posts
                         </h2>
-                        <div class="w3-container">
+                        <!-- <div class="w3-container">
                             <h5 class="w3-opacity"><b>Some Post</b></h5>
                             <h6 class="w3-text"><i class="fa fa-calendar fa-fw w3-margin-right"></i>Jan 2015
                             </h6>
@@ -234,8 +235,28 @@
                                 repellendus iure,
                                 iste.</p>
                             <hr>
-                        </div>
+                        </div> -->
+                        {% if friendStatus==1 %}
+                            {% for post in posts %}
+                            <div class="w3-container">
+                                <h3 class="w3-opacity"><b>{{post['username']}}</b>
+                                    <p style="float:right;font-style: normal; font-size: 0.7em;">{{post['timestamp']}}</p>
+                                </h3>
 
+                                <!-- <h6 class="w3-text"><i
+                                            class="fa fa-calendar fa-fw w3-margin-right">{{post['timestamp']}}</i>
+                                    </h6> -->
+                                {% if post['image'] != "" %}
+                                <img src="data:;base64,{{post['image'] }}"
+                                    style="margin:15px;margin-left: 0;max-width: 100%;">
+                                {% endif %}
+
+                                <h4>{{post['text']}}</h4>
+
+                                <hr>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
                     </div>
 
                     <!-- End Right Column -->

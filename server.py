@@ -24,6 +24,8 @@ mysql = MySQL(app)
 # create table user_profile(
 #     email varchar(50) primary key not null references login_credentails(email),
 #     username varchar(50) not null,
+#     gender varchar(10) not null,
+#     dob varchar(10) not null,
 #     photo mediumblob
 # );
 # create table friend_list(
@@ -39,38 +41,38 @@ mysql = MySQL(app)
 # create table post(
 #     email varchar(50) not null references login_credentials(email),
 #     post_id int not null,
-#     image mediumblob, 
-#     text varchar(1000) not null, #### either image or text has to be not null, or just make text as not null? 
-#     timestamp bigint not null, 
+#     image mediumblob,
+#     text varchar(1000) not null, #### either image or text has to be not null, or just make text as not null?
+#     timestamp bigint not null,
 #     likes int not null,
 #     constraint pk_constraint primary key(email, post_id)
 # );
 # create table likes(
-#     poster_email varchar(50) not null references login_credentials(email), 
-#     post_id int not null references post(post_id), 
+#     poster_email varchar(50) not null references login_credentials(email),
+#     post_id int not null references post(post_id),
 #     liker_email varchar(50) not null references login_credentials(email),
 #     constraint pk_constraint primary key(poster_email, post_id, liker_email)
 # );
 # create table chat(
-#     email1 varchar(50) not null references login_credentials(email), 
-#     email2 varchar(50) not null references login_credentials(email), 
-#     message varchar(2000) not null, #### need to handle empty messages 
+#     email1 varchar(50) not null references login_credentials(email),
+#     email2 varchar(50) not null references login_credentials(email),
+#     message varchar(2000) not null, #### need to handle empty messages
 #     timestamp bigint not null
 # );
 # create table admin_credentials(
-#     email varchar(50) primary key not null, 
+#     email varchar(50) primary key not null,
 #     password varchar(32) not null
 # );
 # insert into admin_credentials values('admin1','a722c63db8ec8625af6cf71cb8c2d939');
 # insert into admin_credentials values('admin2','c1572d05424d0ecb2a65ec6a82aeacbf');
 # insert into admin_credentials values('admin3','3afc79b597f88a72528e864cf81856d2');
 # create table phone_numbers(
-#     email varchar(50), 
+#     email varchar(50),
 #     phone_no varchar(12),
 #     constraint pk_constraint primary key(email, phone_no)
 # );
 # create table schools(
-#     email varchar(50), 
+#     email varchar(50),
 #     school varchar(30),
 #     constraint pk_constraint primary key(email, school)
 # );
@@ -90,6 +92,7 @@ checking for friend requests would be:
 
 socketio = SocketIO(app)
 users = {}
+
 
 @app.route('/')
 def identify():
@@ -132,12 +135,14 @@ def register_user():
                 phone_ctr = phone_ctr + 1
             else:
                 break
-        
+
         email = request.form['email']
         password = request.form['pass']
         passwordhash = hashlib.md5(password.encode()).hexdigest()
         username = request.form['username']
         uploadedImage = request.files['profilePhoto']
+        gender = request.form['gender']
+        dob = request.form['dob']
         imageBytes = uploadedImage.read()
         # filestream = file.stream
         # readvalue = filestream.read()
@@ -145,22 +150,23 @@ def register_user():
         cur = mysql.connection.cursor()
         try:
             cur.execute('insert into login_credentials values(%s, %s)',
-                    [email, passwordhash])
+                        [email, passwordhash])
             mysql.connection.commit()
         except:
             return '<script>alert("Email already exists");window.location=\'/signup\'</script>'
 
         if imageBytes != '':  # needs to be checked
             image = b64encode(imageBytes).decode('utf-8')
-            cur.execute('insert into user_profile values(%s, %s, %s)', [
-                        email, username, image])  # obj or image?
+            cur.execute('insert into user_profile values(%s, %s, %s, %s, %s)', [
+                        email, username, gender, dob, image])  # obj or image?
             mysql.connection.commit()
 
         for item in school:
             cur.execute('insert into schools values(%s, %s)', [email, item])
             mysql.connection.commit()
         for item in phone:
-            cur.execute('insert into phone_numbers values(%s, %s)', [email, item])
+            cur.execute('insert into phone_numbers values(%s, %s)',
+                        [email, item])
             mysql.connection.commit()
 
         cur.close()
@@ -198,10 +204,11 @@ def myProfile():
     email = session['email']
     cur = mysql.connection.cursor()
     cur.execute(
-        'select photo, username from user_profile where email=%s', [email])
+        'select photo, username, gender, dob from user_profile where email=%s', [email])
     result = cur.fetchall()
     posts = []
-    cur.execute('select username, image, text, likes, email, post_id,timestamp from post natural join user_profile where email = %s order by timestamp', [email])
+    cur.execute(
+        'select username, image, text, likes, email, post_id,timestamp from post natural join user_profile where email = %s order by timestamp', [email])
     results = cur.fetchall()
     for post in results:
         temp_post = {}
@@ -211,7 +218,8 @@ def myProfile():
         temp_post['likes'] = post[3]
         temp_post['email'] = post[4]
         temp_post['post_id'] = post[5]
-        temp_post['timestamp'] = datetime.fromtimestamp(post[6]).strftime('%Y-%m-%d')
+        temp_post['timestamp'] = datetime.fromtimestamp(
+            post[6]).strftime('%d-%m-%Y %H:%M')
 
         posts.append(temp_post)
 
@@ -230,7 +238,8 @@ def myProfile():
     cur.close()
 
     image = result[0][0].decode("utf-8")
-    return render_template('myProfile.html', posts=posts, email=email, image=image, username=result[0][1], phone=phone, school=school)
+    return render_template('myProfile.html', posts=posts, email=email, image=image, username=result[0][1], phone=phone, school=school,gender=result[0][2], dob=result[0][3])
+
 
 @app.route('/logout')
 def logout():
@@ -297,10 +306,28 @@ def profile(email):
     for item in results:
         school.append(item[0])
 
+    posts = []
+    cur.execute(
+        'select username, image, text, likes, email, post_id,timestamp from post natural join user_profile where email = %s order by timestamp', [email])
+    results = cur.fetchall()
+    for post in results:
+        temp_post = {}
+        temp_post['username'] = post[0]
+        temp_post['image'] = post[1].decode('utf-8')
+        temp_post['text'] = post[2]
+        temp_post['likes'] = post[3]
+        temp_post['email'] = post[4]
+        temp_post['post_id'] = post[5]
+        temp_post['timestamp'] = datetime.fromtimestamp(
+            post[6]).strftime('%d-%m-%Y %H:%M')
+
+        posts.append(temp_post)
+
+
     cur.close()
     return render_template('profile.html', myEmail=myEmail, email=email, image=image, username=result[0][1],
-        request1Status=len(request1Status), request2Status=len(request2Status), friendStatus=len(friendStatus),
-        phone=phone, school=school)
+                           request1Status=len(request1Status), request2Status=len(request2Status), friendStatus=len(friendStatus),
+                           phone=phone, school=school,posts=posts)
 
 
 @app.route('/send_friend_request', methods=['GET', 'POST'])
@@ -349,7 +376,8 @@ def news_feed():
     posts = []
     cur = mysql.connection.cursor()
     # cur.execute('select user_profile.username, post.image, post.text from user_profile inner join () on')
-    cur.execute('select username, image, text, likes, email, post_id,timestamp from post natural join user_profile where email in (select email2 from friend_list where email1=%s) order by timestamp', [myEmail])
+    cur.execute(
+        'select username, image, text, likes, email, post_id,timestamp from post natural join user_profile where email in (select email2 from friend_list where email1=%s) order by timestamp', [myEmail])
     results = cur.fetchall()
     for post in results:
         temp_post = {}
@@ -359,10 +387,12 @@ def news_feed():
         temp_post['likes'] = post[3]
         temp_post['email'] = post[4]
         temp_post['post_id'] = post[5]
-        temp_post['timestamp'] = post[6]
+        temp_post['timestamp'] = datetime.fromtimestamp(
+            post[6]).strftime('%d-%m-%Y %H:%M')
         posts.append(temp_post)
         # print("''" + str(temp_post['image'])+"''")
     return render_template('news_feed.html', myEmail=myEmail, posts=posts)
+
 
 @app.route('/update_likes', methods=['POST'])
 def update_likes():
@@ -371,44 +401,54 @@ def update_likes():
     post_id = request.form['post_id']
     likes = request.form['likes']
     cur = mysql.connection.cursor()
-    cur.execute('select * from likes where poster_email=%s and post_id=%s and liker_email=%s', [poster_email, int(post_id), myEmail])
+    cur.execute('select * from likes where poster_email=%s and post_id=%s and liker_email=%s',
+                [poster_email, int(post_id), myEmail])
     results = cur.fetchall()
     print('results:', results, len(results))
     if len(results) == 0:
-        cur.execute('update post set likes=%s where email=%s and post_id=%s', [int(likes)+1, poster_email, post_id])
+        cur.execute('update post set likes=%s where email=%s and post_id=%s', [
+                    int(likes)+1, poster_email, post_id])
         mysql.connection.commit()
-        cur.execute('insert into likes values(%s, %s, %s)', [poster_email, post_id, myEmail])
+        cur.execute('insert into likes values(%s, %s, %s)',
+                    [poster_email, post_id, myEmail])
         mysql.connection.commit()
     else:
-        cur.execute('update post set likes=%s where email=%s and post_id=%s', [int(likes)-1, poster_email, post_id])
+        cur.execute('update post set likes=%s where email=%s and post_id=%s', [
+                    int(likes)-1, poster_email, post_id])
         mysql.connection.commit()
-        cur.execute('delete from likes where poster_email=%s and post_id=%s and liker_email=%s', [poster_email, post_id, myEmail])
+        cur.execute('delete from likes where poster_email=%s and post_id=%s and liker_email=%s', [
+                    poster_email, post_id, myEmail])
         mysql.connection.commit()
     cur.close()
     return redirect(url_for('news_feed'))
 
-@app.route('/upload_post', methods=['POST','GET'])
+
+@app.route('/upload_post', methods=['POST', 'GET'])
 def upload_post():
     cur = mysql.connection.cursor()
     print(request.form)
     myEmail = session['email']
     cur.execute('select max(post_id) from post where email=%s', [myEmail])
-    numberOfPosts = cur.fetchall()
+    maxPostId = cur.fetchall()
+    newPostId = 0
+    # print(len(maxPostId), len(maxPostId[0]), maxPostId)
+    if maxPostId[0][0] != None:
+        newPostId = maxPostId[0][0] + 1
     image = request.files['image']
     imageBytes = image.read()
     text = request.form['text']
     cur.execute('select unix_timestamp()')
     current_timestamp = cur.fetchall()
-    print(type(current_timestamp[0][0]), type(numberOfPosts[0][0]))
+    # print(type(current_timestamp[0][0]), type(numberOfPosts[0][0]))
     likes = 0
     if imageBytes != '':
         image64 = b64encode(imageBytes).decode('utf-8')
         cur.execute('insert into post values(%s, %s, %s, %s, %s, %s)', [
-                    myEmail, numberOfPosts[0][0] + 1, image64, text, current_timestamp, likes])
+                    myEmail, newPostId, image64, text, current_timestamp, likes])
         mysql.connection.commit()
     else:
         cur.execute('insert into post values(%s, %d, %s, %s, %d, %d)', [
-                    myEmail, numberOfPosts[0][0] + 1, None, text, current_timestamp, likes])
+                    myEmail, newPostId, None, text, current_timestamp, likes])
         mysql.connection.commit()
     cur.close()
     return redirect(url_for('news_feed'))
@@ -446,17 +486,20 @@ def search_results():
     # print(type(results))
     return render_template('display_profiles.html', myEmail=myEmail, profiles=user_list)
 
+
 @app.route('/chat/<email>', methods=['POST'])
 def chat(email):
     myEmail = session['email']
     print(myEmail + ' - ' + email)
     cur = mysql.connection.cursor()
-    cur.execute('select username, photo from user_profile where email=%s', [email])
+    cur.execute(
+        'select username, photo from user_profile where email=%s', [email])
     res = cur.fetchall()
     username = res[0][0]
     photo = res[0][1].decode('utf-8')
 
-    cur.execute('select username, photo from user_profile where email=%s', [myEmail])
+    cur.execute(
+        'select username, photo from user_profile where email=%s', [myEmail])
     res1 = cur.fetchall()
     # myUsername = res1[0][0]
     myPhoto = res1[0][1].decode('utf-8')
@@ -467,13 +510,15 @@ def chat(email):
     current_timestamp = cur.fetchall()
     print(current_timestamp)
     if message_sent != '':
-        cur.execute('insert into chat values(%s, %s, %s, %s)', [myEmail, email, message_sent, current_timestamp[0][0]])
+        cur.execute('insert into chat values(%s, %s, %s, %s)', [
+                    myEmail, email, message_sent, current_timestamp[0][0]])
         mysql.connection.commit()
         # cur.connection.commit()
         cur.close()
     # print(email)
-    #fetching friends for sidebar
-    cur.execute('select email2, username, photo from friend_list inner join user_profile on email2=email where email1=%s', [myEmail])
+    # fetching friends for sidebar
+    cur.execute(
+        'select email2, username, photo from friend_list inner join user_profile on email2=email where email1=%s', [myEmail])
     res = cur.fetchall()
     friends = []
     for item in res:
@@ -483,22 +528,24 @@ def chat(email):
         temp_friend['photo'] = item[2].decode('utf-8')
         friends.append(temp_friend)
 
-    #fetching messages for chat
+    # fetching messages for chat
     messages = []
     if email == myEmail:
         pass
     else:
-        cur.execute('select * from chat where (email1=%s and email2=%s) or (email1=%s and email2=%s) order by timestamp', [myEmail, email, email, myEmail])
+        cur.execute('select * from chat where (email1=%s and email2=%s) or (email1=%s and email2=%s) order by timestamp',
+                    [myEmail, email, email, myEmail])
         res = cur.fetchall()
         for item in res:
             temp_message = {}
             temp_message['email1'] = item[0]
             temp_message['email2'] = item[1]
             temp_message['text'] = item[2]
-            temp_message['timestamp'] = datetime.fromtimestamp(item[3]).strftime('%Y-%m-%d %H:%M:%S')
+            temp_message['timestamp'] = datetime.fromtimestamp(
+                item[3]).strftime('%Y-%m-%d %H:%M:%S')
             messages.append(temp_message)
 
-    return render_template('chat.html',myPhoto=myPhoto,myEmail=myEmail, friends=friends, messages=messages, email=email, username=username, photo=photo)
+    return render_template('chat.html', myPhoto=myPhoto, myEmail=myEmail, friends=friends, messages=messages, email=email, username=username, photo=photo)
 
 # @app.route('/update_chat_message', methods=['POST'])
 # def update_chat_message:
@@ -508,6 +555,7 @@ def chat(email):
 #     email= request.form['email']
 #     username= request.form['username']
 #     return render_template('chat.html', )
+
 
 @socketio.on('email', namespace='/private')
 def receive_username(email):
@@ -524,21 +572,25 @@ def private_message(payload):
     # cur = mysql.connection.cursor()
     # cur.execute()
     recipient_session_id = users[payload['email']]
-    message = payload['message']   
-    print(recipient_session_id, message) 
+    message = payload['message']
+    print(recipient_session_id, message)
     cur = mysql.connection.cursor()
     myEmail = session['email']
     cur.execute('select unix_timestamp()')
     current_timestamp = cur.fetchall()
-    cur.execute('insert into chat values(%s,%s,%s,%s)', [myEmail, payload['email'], message, current_timestamp[0][0]])
+    cur.execute('insert into chat values(%s,%s,%s,%s)', [
+                myEmail, payload['email'], message, current_timestamp[0][0]])
     mysql.connection.commit()
     # cur.connection.commit()
     cur.close()
-    emit('new_private_message', message, room=recipient_session_id, include_self=True)
+    emit('new_private_message', message,
+         room=recipient_session_id, include_self=True)
+
 
 @app.route('/admin_login')
 def admin_login():
     return render_template('admin_login.html')
+
 
 @app.route('/verify_admin', methods=['GET', 'POST'])
 def verify_admin():
@@ -568,7 +620,8 @@ def admin_feed():
     posts = []
     cur = mysql.connection.cursor()
     # cur.execute('select user_profile.username, post.image, post.text from user_profile inner join () on')
-    cur.execute('select username, image, text, likes, email, post_id from post natural join user_profile order by timestamp')
+    cur.execute(
+        'select username, image, text, likes, email, post_id from post natural join user_profile order by timestamp')
     results = cur.fetchall()
     for post in results:
         temp_post = {}
@@ -584,14 +637,16 @@ def admin_feed():
     return render_template('admin_feed.html', myEmail=myEmail, posts=posts)
 
 
-@app.route('/delete_posts',methods=['POST'])
+@app.route('/delete_posts', methods=['POST'])
 def delete_posts():
     post_id = request.form['post_id']
     email = request.form['poster_email']
     cur = mysql.connection.cursor()
-    cur.execute('delete from post where email=%s and post_id=%s',[email,post_id])
+    cur.execute('delete from post where email=%s and post_id=%s',
+                [email, post_id])
     mysql.connection.commit()
-    cur.execute('delete from likes where poster_email=%s and post_id=%s',[email,post_id])
+    cur.execute('delete from likes where poster_email=%s and post_id=%s', [
+                email, post_id])
     mysql.connection.commit()
     cur.close()
     return redirect(url_for('admin_feed'))
@@ -600,5 +655,4 @@ def delete_posts():
 if __name__ == '__main__':
 
     app.secret_key = 'acquaintance'
-    socketio.run(app,debug=True)
-
+    socketio.run(app, debug=True)

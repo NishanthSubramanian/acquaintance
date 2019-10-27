@@ -30,7 +30,8 @@
                     <div class="row heading" style="padding-right:5px;">
                         <div class="col-sm-2 col-xs-2 heading-avatar pull-right">
                             <div class="heading-avatar-icon">
-                                <img src=" data:;base64,{{myPhoto}}" onerror="this.src='https://miro.medium.com/max/560/1*MccriYX-ciBniUzRKAUsAw.png'">
+                                <img src=" data:;base64,{{myPhoto}}"
+                                    onerror="this.src='https://miro.medium.com/max/560/1*MccriYX-ciBniUzRKAUsAw.png'">
                             </div>
                         </div>
                         <a href="/news_feed">
@@ -44,7 +45,7 @@
                                 border-radius: 80px;
                                 box-shadow: 0px 0px 2px #888;
                                 /* padding: 0.5em 0.6em; */
- /* */
+                            /* */
                             /* } */
                         </style>
                         <!-- <div class="col-sm-2 col-xs-2 heading-compose  pull-right">
@@ -67,34 +68,40 @@
                     <!-- Search Box End -->
                     <!-- sideBar -->
                     <div class="row sideBar">
-                            {% for friend in friends %}
-                        <div class="row sideBar-body">
-                            <!-- {% for friend in friends %} -->
-                            <div class="col-sm-3 col-xs-3 sideBar-avatar">
-                                <div class="avatar-icon">
-                                    <img src=" data:;base64,{{friend['photo']}} "
-                                    onerror="this.src='https://miro.medium.com/max/560/1*MccriYX-ciBniUzRKAUsAw.png'">
-                                    <!-- <script>console.log({{friend['photo']}});</script> -->
-                                </div>
-                            </div>
-                            <div class="col-sm-9 col-xs-9 sideBar-main">
-                                <!-- <form class="form center-block" action="/chat" method="POST"> -->
-                                <form class="form center-block" action="/chat/{{friend['email']}}" method="POST"
-                                    id="choose_friend">
-                                    <!-- <button type="submit, button" class="block"> -->
-                                    <div class="row" id="send_private_message"
-                                        onclick="document.forms['choose_friend'].submit()">
+                        {% for friend in friends %}
+                        <form class="form center-block" action="/chat/{{friend['email']}}" method="POST"
+                            id="choose_friend">
+                            <div onclick="javascript:this.parentNode.submit()">
+                                <div class="row sideBar-body">
+
+                                    <div class="col-sm-3 col-xs-3 sideBar-avatar">
+                                        <div class="avatar-icon">
+                                            <img src=" data:;base64,{{friend['photo']}} "
+                                                onerror="this.src='https://miro.medium.com/max/560/1*MccriYX-ciBniUzRKAUsAw.png'">
+                                            <!-- <script>console.log({{friend['photo']}});</script> -->
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-9 col-xs-9 sideBar-main">
+                                        <!-- <form class="form center-block" action="/chat" method="POST"> -->
+                                        <!-- <form class="form center-block" action="/chat/{{friend['email']}}" method="POST"
+                                    id="choose_friend"> -->
+                                        <!-- <button type="submit, button" class="block"> -->
+                                        <!-- <div class="row" id="send_private_message"
+                                        onclick="document.forms['choose_friend'].submit()"> -->
                                         <div class="col-sm-8 col-xs-8 sideBar-name">
                                             <input type="hidden" name="message_to_send" id="message_to_send" value="">
                                             <!-- <button type="submit"> -->
                                             <span class="name-meta">{{ friend['username'] }}</span>
+                                            <span class="email-meta">{{ friend['email'] }}</span>
+                                            <!-- <button type="submit"></button> -->
                                             <!-- </button> -->
+                                            <!-- <script>console.log("{{friend}}")</script> -->
+                                            <!-- </div> -->
                                         </div>
-                                    </div>
-                                    <!-- </button> -->
-                                </form>
+                                        <!-- </button> -->
+                                        <!-- </form> -->
 
-                                <!-- <div class="row" onclick=location.href="/chat/{{friend['email']}}">
+                                        <!-- <div class="row" onclick=location.href="/chat/{{friend['email']}}">
                                     <div class="col-sm-8 col-xs-8 sideBar-name">
                                         <span class="name-meta">{{ friend['username'] }}
                                         </span>
@@ -105,10 +112,12 @@
                                     </div>
                                 </div> -->
 
-                                <!-- </form> -->
+                                        <!-- </form> -->
+                                    </div>
+
+                                </div>
                             </div>
-                            {% endfor %}
-                        </div>
+                        </form>
                         {% endfor %}
                     </div>
                     <!-- Sidebar End -->
@@ -180,7 +189,7 @@
                     <div class="col-sm-2 col-md-1 col-xs-3 heading-avatar">
                         <div class="heading-avatar-icon">
                             <img src="data:;base64,{{ photo }}"
-                            onerror="this.src='https://miro.medium.com/max/560/1*MccriYX-ciBniUzRKAUsAw.png'">
+                                onerror="this.src='https://miro.medium.com/max/560/1*MccriYX-ciBniUzRKAUsAw.png'">
                         </div>
                     </div>
                     <div class="col-sm-8 col-xs-7 heading-name">
@@ -938,7 +947,7 @@
 
 
     $(document).ready(function () {
-        $(".msg_container_base").stop().animate({ scrollTop: $(".msg_container_base")[0].scrollHeight}, 1000);
+        $(".msg_container_base").stop().animate({ scrollTop: $(".msg_container_base")[0].scrollHeight }, 1000);
         var socket = io.connect('http://127.0.0.1:5000');
 
         var socket_messages = io('http://127.0.0.1:5000/messages')
@@ -963,7 +972,7 @@
         // });
 
         $('#textform').submit(function (e) {
-            $(".msg_container_base").stop().animate({ scrollTop: $(".msg_container_base")[0].scrollHeight}, 1000);
+            $(".msg_container_base").stop().animate({ scrollTop: $(".msg_container_base")[0].scrollHeight }, 1000);
             e.preventDefault();
             console.log("test");
             var recipient = email
@@ -981,7 +990,7 @@
             var minutes = "0" + date.getMinutes();
             // Seconds part from the timestamp
             var seconds = "0" + date.getSeconds();
-            var month = parseInt(date.getMonth(),10) + 1
+            var month = parseInt(date.getMonth(), 10) + 1
             // Will display time in 10:30:23 format
             var formattedTime = date.getFullYear() + '-' + month + '-' + date.getDate() + ' ' + hours.substr(-2) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 
@@ -1013,12 +1022,12 @@
             var minutes = "0" + date.getMinutes();
             // Seconds part from the timestamp
             var seconds = "0" + date.getSeconds();
-            var month = parseInt(date.getMonth(),10) + 1
+            var month = parseInt(date.getMonth(), 10) + 1
             var formattedTime = date.getFullYear() + '-' + month + '-' + date.getDate() + ' ' + hours.substr(-2) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 
             // Will display time in 10:30:23 format
             $("#conversation").append('<div class="row message-body"><div class="col-sm-12 message-main-receiver"> <div class="receiver"><div class="message-text">' + msg + '</div><span class="message-time pull-right">' + formattedTime + '</span></div></div></div>');
-            
+
             // $("#messages").append('<li>' + msg + '</li>');
             // document.forms['textform'].submit();
         });

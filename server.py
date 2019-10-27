@@ -554,7 +554,7 @@ def chat(email):
             temp_message['timestamp'] = datetime.fromtimestamp(
                 item[3]).strftime('%Y-%m-%d %H:%M:%S')
             messages.append(temp_message)
-
+    print(friends)
     return render_template('chat.html', myPhoto=myPhoto, myEmail=myEmail, friends=friends, messages=messages, email=email, username=username, photo=photo)
 
 # @app.route('/update_chat_message', methods=['POST'])

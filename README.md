@@ -10,3 +10,5 @@ Acquaintance is a Social Network for updated news, chatting, connecting with fri
 - HTML
 - CSS
 - Bootstrap
+- JavaScript
+- JQuery
